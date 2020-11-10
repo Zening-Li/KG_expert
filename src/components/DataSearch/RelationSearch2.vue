@@ -4,16 +4,16 @@
     <el-main>
       <!--顶部-->
       <div class="header">
-        关系检索2
+        两跳关系检索
       </div>
       <el-divider></el-divider>
       <!--中心-->
       <!--列表页-->
       <div class="main" >
         <!--搜索栏-->
-        <el-input v-model="inputEntity1" placeholder="实体1"></el-input>
-        <el-input v-model="inputRelation" placeholder="关系"></el-input>
-        <el-input v-model="inputEntity2" placeholder="关系"></el-input>
+        <el-input v-model="inputEntity1" placeholder="实体"></el-input>
+        <el-input v-model="inputRelation" placeholder="第一跳关系"></el-input>
+        <el-input v-model="inputEntity2" placeholder="第二跳关系"></el-input>
         <!-- <el-select v-model="level" placeholder="请选择查询级数">
           <el-option
             v-for="item in levelList"
@@ -58,7 +58,7 @@
             </el-table-column>
             <el-table-column
               prop="entity2"
-              label="关系">
+              label="实体2">
             </el-table-column>
           </el-table>
           <!-- 分页符
@@ -92,17 +92,17 @@
           inputEntity1:'',
           inputEntity2:'',
           inputRelation:'',
-          // levelList:[{
-          //   label:"一级查询",
-          //   value:1
-          // },{
-          //   label:"二级查询",
-          //   value:2
-          // },{
-          //   label:"三级查询",
-          //   value:3
-          // }],
-          // level:1,
+          levelList:[{
+            label:"一级查询",
+            value:1
+          },{
+            label:"二级查询",
+            value:2
+          },{
+            label:"三级查询",
+            value:3
+          }],
+          level:1,
           loadingRes:false,
           searchTime:"",
           tupleNum:0,
@@ -134,19 +134,18 @@
           }
           /*逻辑和实体检索类似*/
           let fd = new FormData();
-          fd.append("entity1",this.inputEntity1);
-          fd.append("entity2",this.inputEntity2);
-          fd.append("relation",this.inputRelation);
-          // fd.append("number",this.level);
-          this.$http.post('http://10.4.20.119:8000/neo/search_relation',fd).then((res) =>
-            {
-              console.log(res);
-              if(res.data[0][1].length === 0&&res.data[0][2].length === 0&&res.data[0][0].length === 0){
+          fd.append("entity",this.inputEntity1);
+          fd.append("relation1",this.inputRelation);
+          fd.append("relation2",this.inputEntity2);
+          this.$http.post('http://39.102.71.123:23352/neo/search_double_relation',fd)
+            .then((res) => {
+              console.log("res:",res.data[0]);
+              if(res.data[0][1].length === 0 && res.data[0][2].length === 0 && res.data[0][0].length === 0){
                 this.$message({
                   message: '未查询到相关信息！',
                   type: 'warning'
                 });
-                this.loadingRes=false;
+                this.loadingRes = false;
                 return;
               }
               let graphPoint = [];
@@ -281,7 +280,6 @@
               this.searchTime=res.data[1];
               this.tupleNum = res.data[2];
 
-		        	// let graphPoint = [];
 			// let graphLink = [];
 			// let pointSet = new Set();
 			// for(let i = 0; i < res.data.searchResult.length; i ++){
@@ -410,7 +408,7 @@
                   if(obj.hasOwnProperty("source"))//links
                   {
                     ////obj.source+obj.name+obj.target 头节点、关系、尾节点
-                    // this.$http.get('http://10.4.20.119:8000/search_entity?head='+obj.source+"&relation="+obj.name+"&tail="+obj.target).then(
+                    // this.$http.get('http://39.102.71.123:23352/search_entity?head='+obj.source+"&relation="+obj.name+"&tail="+obj.target).then(
                     //   (res) => {
                     //   })
                     alert("1");
@@ -418,7 +416,7 @@
                   else //points
                   {
                     ////实体名为obj.name
-                    // this.$http.get('http://10.4.20.119:8000/search_entity?entity='+obj.name).then((res) => {
+                    // this.$http.get('http://39.102.71.123:23352/search_entity?entity='+obj.name).then((res) => {
                     // })
                     alert("2");
                   }

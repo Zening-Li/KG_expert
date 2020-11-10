@@ -121,7 +121,8 @@
       <!--</div>-->
       <!--顶部-->
       <div class="header">
-        图片预测
+        <i class="el-icon-back" v-if="!sourceFlag" @click="backToSource" style="margin-right:10px;"></i>
+        图片分类
         <!--<el-button-->
         <!--type="primary"-->
         <!--class="darkBtn headbutton"-->
@@ -147,10 +148,25 @@
           >上传文件</el-button
         >
         <el-button
+          class="darkBtn headbutton"
+          size="small"
+          @click="testResult"
+          v-if="!resultFlag"
+          >查看测试结果</el-button
+        >
+        <el-button
+          class="darkBtn headbutton"
+          size="small"
+          @click="modelTest"
+          v-if="!resultFlag"
+          >模型测试</el-button
+        >
+        <el-button
           class="blueBtn headbutton"
           size="small"
           @click="loadList"
           v-if="!resultFlag"
+          :disabled="btnDis"
           >加载测试图像</el-button
         >
       </div>
@@ -158,8 +174,35 @@
       <!--中心-->
       <!--      列表页-->
       <div class="main" v-if="!resultFlag">
+        <el-row class="top-tip" v-if="tabDis == 2">
+          <span>请选择分类目录：</span>
+          <el-select
+            v-model="fileIndex"
+            placeholder
+            size="small"
+            style="margin-left: 10px"
+          >
+            <el-option
+              v-for="(item, index) in fileList"
+              :key="index"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
+
+          <el-button
+            style="margin-left: 20px"
+            class="blueBtn"
+            size="small"
+            @click="chooseTable"
+          >加载数据</el-button>
+        </el-row>
+
         <div id="matchInfo" v-if="picList.length !== 0">
-          已有预测数据数量 : {{ picList.length }}
+          已有测试数据数量 : {{ picList.length }}
+        </div>
+        <div id="matchInfo1" v-if="tabDis == 2 && testSum != 0">
+          该分类下的数据总数 : {{ testSum }}
         </div>
         <!--文书列表-->
         <el-row
@@ -174,6 +217,7 @@
               height="626"
               style="width: 97%"
               border
+              v-if="tabDis == 1"
             >
               <el-table-column prop="title" label="预测数据"></el-table-column>
               <el-table-column label="浏览" width="80" align="center">
@@ -200,6 +244,52 @@
                   >
                 </template>
               </el-table-column>
+              <!-- <el-table-column label="预测" width="80" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    @click="handleAnalysis(scope.row)"
+                    type="primary"
+                    plain
+                    size="small"
+                    >预测</el-button
+                  >
+                </template>
+              </el-table-column> -->
+            </el-table>
+            <el-table
+              :data="testData.slice((curPage - 1) * 10, curPage * 10)"
+              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              height="626"
+              style="width: 97%"
+              border
+              v-if="tabDis == 2"
+            >
+              <el-table-column prop="title1" label="测试数据"></el-table-column>
+              <el-table-column label="浏览" width="80" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    @click="handleShow1(scope.row)"
+                    type="primary"
+                    plain
+                    size="small"
+                    >浏览</el-button
+                  >
+                </template>
+              </el-table-column>
+              <!-- <el-table-column label="分类" width="80" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    @click="handleClassify(scope.row)"
+                    type="primary"
+                    plain
+                    size="small"
+                    >分类</el-button
+                  >
+                </template>
+              </el-table-column>
               <el-table-column label="预测" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
@@ -211,7 +301,7 @@
                     >预测</el-button
                   >
                 </template>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
             <!-- 分页符-->
             <el-pagination
@@ -220,6 +310,15 @@
               :total="picList.length"
               :current-page.sync="curPage"
               @current-change="handleCurrentChange"
+              v-if="tabDis == 1"
+            ></el-pagination>
+            <el-pagination
+              background
+              layout="prev, pager, next, jumper"
+              :total="testData.length"
+              :current-page.sync="curPage"
+              @current-change="handleCurrentChange"
+              v-if="tabDis == 2"
             ></el-pagination>
             <!--</el-pagination> -->
           </el-col>
@@ -344,8 +443,10 @@ export default {
   name: "ImagePredict",
   data() {
     return {
+      btnDis: false,
       classifyResult: "分类结果",
       showClassify: false,
+      sourceFlag: true,
       classifySrc: "",
       inputEntity: "",
       levelList: [
@@ -368,8 +469,18 @@ export default {
       curPage: 1,
       curPageResult: 1,
       uploadFileList: [],
+      tabDis: 1,
+      fileIndex: "",
+      fileList: [
+        "Land_sunny",
+        "Sea_cloudy",
+        "Sea_night",
+        "Sea_sunny",
+      ],
       //表格数据 测试集
       picList: [],
+      testData: [],
+      testSum: 0,
       //选中行
       choosenRow: {},
       //三元组数据
@@ -432,6 +543,19 @@ export default {
         } 个文件`
       );
     },
+    //返回按钮
+    backToSource() {
+      this.sourceFlag = true;
+      this.tabDis = 1;
+      this.testData = [];
+      this.btnDis = false;
+      this.testSum = 0;
+      this.src = "";
+      this.resultList = [];
+      this.selectTitle = "";
+      this.fileIndex = "";
+    },
+    //加载测试图像
     loadList() {
       this.loadingRes = true;
       this.$http
@@ -452,6 +576,82 @@ export default {
           alert("出错了！");
           this.loadingRes = false;
         });
+    },
+    //模型测试
+    modelTest() {
+      this.loadingRes = true;
+      this.$http
+        .post("http://39.102.71.123:23352/pic/pic_detect_classification_all", {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log("res",res)
+          this.loadingRes = false;
+          this.$alert(
+            "<p><strong>图片总数量： <i>" +
+            res.data[0] +
+            "</i> 张</strong></p>" +
+            "<p><strong>图片分类正确数量： <i>" +
+            res.data[1] +
+            "</i> 张</strong></p>" +
+            "<p><strong>图片分类错误数量： <i>" +
+            res.data[2] +
+            "</i> 张</strong></p>" +
+            "<p><strong>图片分类准确率： <i>" +
+            res.data[3] +
+            "</i> %</strong></p>" ,
+            "模型测试结果",
+            {
+              dangerouslyUseHTMLString: true
+            }
+          );
+        })
+        .catch((res) => {
+          console.log(res);
+          alert("出错了！");
+          this.loadingRes = false;
+        });
+    },
+    //查看测试结果
+    testResult() {
+      this.sourceFlag = false;
+      this.tabDis = 2;
+      this.src = "";
+      this.picList = [];
+      this.btnDis = true;
+    },
+    //加载数据
+    chooseTable() {
+      if(this.fileIndex != "") {
+        let fd = new FormData();
+        fd.append("classfication", this.fileIndex);
+        this.$http
+          .post("http://39.102.71.123:23352/pic/pic_detect_classification_results_1", fd, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then(res => {
+            console.log("res:",res);
+            this.testSum = res.data[1];
+            this.testData = res.data[0].map((cur) => {
+              return { title1: cur };
+            });
+            this.fullscreenLoading = false;
+          })
+          .catch(error => {
+            console.log(error);
+            alert("出错了！");
+            this.fullscreenLoading = false;
+          })
+      }else if(this.fileIndex == "") {
+        this.$message({
+          message: "请先选择分类！",
+          type: "warning"
+        })
+      }
     },
     handleCurrentChange(cpage) {
       this.curPage = cpage;
@@ -479,6 +679,29 @@ export default {
           console.log(res);
           this.loadingRes = false;
         });
+    },
+    //浏览
+    handleShow1(row) {
+      console.log("row:",row);
+      this.loadingRes = true;
+      this.selectTitle = row.title1;
+      let fd = new FormData();
+      fd.append("filename",row.title1);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/pic_detect_classification_results_2", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(res => {
+          console.log("res.data",res.data);
+          this.src = res.data;
+          this.loadingRes = false;
+        })
+        .catch(error => {
+          console.log(error);
+          this.loadingRes = false;
+        })
     },
     handleClassify(row) {
       this.selectTitle = row.title;
@@ -684,6 +907,16 @@ body > .el-container {
 }
 
 #matchInfo {
+  background-color: #f0f9eb;
+  color: #67c23a;
+  padding: 8px 16px;
+  width: 95%;
+  padding: 8px 16px;
+  border-radius: 10px;
+  margin: 0 0 15px 10px;
+  font-size: 13px;
+}
+#matchInfo1 {
   background-color: #f0f9eb;
   color: #67c23a;
   padding: 8px 16px;
