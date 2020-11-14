@@ -25,6 +25,19 @@ new Vue({
 Vue.prototype.$http = axios
 
 
+// axios.defaults.timeout = 500000000000
+
+/* axios.interceptors.response.use(response => {
+  return response
+}, err => {
+    if(err.message == 'timeout of 5000ms exceeded'){
+        return {code : 10,message:'请求超时'}
+    }else{
+        return {code :500, message:'网络连接失败，请稍后重试'}
+    }
+}) */
+
+
 let axiosPromiseArr=[] //储存cancel token
 
 axios.interceptors.request.use(function (config) {

@@ -129,12 +129,12 @@
           </el-row>
           <el-row style="margin-top:10px;">
             
-            <el-button
+            <!-- <el-button
               style="float:right;margin-right:20px;"
               class="blueBtn"
               size="small"
               @click="createDependence"
-            >生成函数依赖</el-button>
+            >生成函数依赖</el-button> -->
           </el-row>
           <div style="width:100%; margin-top:10px;">
             <el-tag
@@ -224,7 +224,7 @@ export default {
       propertySelect: "",
       propertyKey: -1,
       sourceIndex: "",
-      sourceList: ["structData", "structData2", "structData3"],
+      sourceList: ["海战场装备性能库1", "海战场装备性能库2","海战场装备性能库3"],
       tableIndex: "",
       properties: [],
       tableData: [],
@@ -235,7 +235,7 @@ export default {
       loadingResGraph: false,
       graphFlag: false,
       typeSelect: "",
-      typeList: ["本体1", "本体2", "本体3", "本体4"],
+      typeList: [], //选择表格
       sourceFlag: true,
       canFlag: true,
       fullscreenLoading: false,
@@ -397,7 +397,8 @@ export default {
           console.log(res);
         });
     },
-    createDependence() {
+    //生成函数依赖
+    /* createDependence() {
       let fd = new FormData();
       fd.append("ontology", this.typeSelect);
       this.$http
@@ -426,7 +427,7 @@ export default {
         .catch(res => {
           console.log(res);
         });
-    },
+    }, */
     //抽取实体
     extractEntity() {
       let fd = new FormData();
@@ -642,7 +643,7 @@ export default {
         return "";
       }
     },
-    //选择表格
+    //选择表格 确定
     chooseTable() {
       if (this.tableIndex === "") return;
       this.loadingRes = true;
@@ -691,6 +692,19 @@ export default {
           alert("请求失败");
           this.loadingRes = false;
         });
+        this.$http
+          .post("http://39.102.71.123:23352/pic/ontology_source", {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
+          .then(res => {
+            console.log("1111",res.data);
+            this.typeList = res.data;
+          })
+          .catch(error => {
+            console.log(error);
+          })
     },
     //展示图谱
     showGraph(res) {

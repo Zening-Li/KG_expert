@@ -42,7 +42,7 @@
           size="small"
           style="float:right; margin-right:20px;"
           @click="loadJS"
-        >加载JS文书</el-button>
+        >加载军事文书</el-button>
       </div>
       <div
         class="result"
@@ -140,6 +140,15 @@
               border
             >
               <el-table-column prop="title" :label="'实体标注目录(共'+tableDataEntity.length+'个)'"></el-table-column>
+              <el-table-column label="操作" width="100" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    type="primary"
+                    size="small"
+                    @click.stop="handleAnalysis1(scope.row)">浏览</el-button>
+                </template>
+              </el-table-column>
             </el-table>
             <el-pagination
               background
@@ -158,6 +167,15 @@
               border
             >
               <el-table-column prop="title" :label="'关系标注目录(共'+tableDataRelation.length+'个)'"></el-table-column>
+              <el-table-column label="操作" width="100" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    type="primary"
+                    size="small"
+                    @click.stop="handleAnalysis2(scope.row)">浏览</el-button>
+                </template>
+              </el-table-column>
             </el-table>
             <el-pagination
               background
@@ -169,6 +187,27 @@
           </el-col>
         </el-row>
       </div>
+      <!-- 弹框 -->
+      <el-dialog
+        title="实体标注文本"
+        :visible.sync="dialogVisible"
+        width="30%"
+      >
+        <p ref="diaOne" style="margin: -30px 0"></p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog
+        title="关系标注文本"
+        :visible.sync="dialogVisible1"
+        width="30%"
+      >
+        <p ref="diaTwo" style="margin: -30px 0"></p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-main>
     <el-main v-show="isSearch">
       <!--顶部-->
@@ -238,6 +277,10 @@ export default {
       //图谱
       graphWidth:"100%",
       graphHeight:"100%",
+      //弹框
+      dialogVisible: false,
+      dialogVisible1: false,
+      dialogText: "",
     };
   },
   methods: {
@@ -418,6 +461,54 @@ export default {
           this.loadingRes = false;
         });
     },
+    //实体标注目录 浏览
+    handleAnalysis1(row) {
+      this.loadingRes = true;
+      let fd = new FormData();
+      fd.append("filename", row.title);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/view_JS_mark_text_ner", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(res => {
+          this.loadingRes = false;
+          this.dialogText = res.data.replace(/\n/g,"<br>");
+          this.dialogVisible = true;
+          this.$nextTick(() => {
+            this.$refs.diaOne.innerHTML = this.dialogText;
+          })
+        })
+        .catch(error => {
+          this.loadingRes = false;
+          console.log(error);
+        })
+    },
+    //关系标注目录 浏览
+    handleAnalysis2(row) {
+      console.log("row.title",row.title);
+      this.loadingRes = true;
+      let fd = new FormData();
+      fd.append("filename", row.title);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/view_JS_mark_text_relation", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(res => {
+          this.loadingRes = false;
+          this.dialogVisible1 = true;
+          this.$nextTick(() => {
+            this.$refs.diaTwo.innerHTML = res.data;
+          })
+        })
+        .catch(error => {
+          this.loadingRes = false;
+          console.log(error);
+        })
+    },
     loadJS() {
       this.isList = true;
       this.listType = true;
@@ -444,6 +535,7 @@ export default {
           this.loadingRes = false;
         });
     },
+    //加载标注目录
     loadTagDirectory() {
       this.isList = false;
       this.listType = false;
@@ -457,7 +549,6 @@ export default {
           }
         })
         .then(res => {
-          // console.log(res)
           this.textData = "";
           this.tableDataEntity = res.data[0].map(cur => {
             return { title: cur };

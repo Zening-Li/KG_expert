@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <!--内容块-->
-    <el-main>
+    <el-main style="padding: -20px">
       <!--顶部-->
       <div class="header">
         视频转换为图像

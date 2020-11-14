@@ -27,12 +27,12 @@
           >加载测试数据</el-button>
           <!-- <span style="margin-left:10px;">或</span> -->
 
-          <el-button
+          <!-- <el-button
             class="darkBtn"
             size="small"
             style="float:right; margin-right:20px;"
             @click="calculateAverage"
-          >计算平均结果</el-button>
+          >计算平均结果</el-button> -->
           <el-button
             class="darkBtn"
             size="small"
@@ -168,6 +168,7 @@ export default {
         console.log(res)
       })
     },
+    //全选
     checkAll() {
       this.numberArr = [1,this.number];
       this.numberStr = this.numberArr.toString();
@@ -186,6 +187,7 @@ export default {
     },
     //加载测试数据
     chooseTestData() {
+      this.loadingRes = true;
       this.fileType = false;
       this.btnDisable = true;
       let fd = new FormData();
@@ -197,6 +199,7 @@ export default {
           }
         })
         .then(res => {
+          this.loadingRes = false;
           this.number = res.data[1].length;
           this.columnNames=[]
           this.columnNames = res.data[0].map(cur => {
@@ -214,12 +217,14 @@ export default {
           console.log(this.tableData)
         })
         .catch(res => {
+          this.loadingRes = false;
           console.log(res);
         });
     },
     handleCurrentChange(cpage) {
       this.curPage = cpage;
     },
+    //结构化知识抽取
     extractStruct() {
       this.loadingRes = true
       let fd = new FormData();
@@ -262,7 +267,7 @@ export default {
         console.log(this.recallSet)
         this.loadingRes = false;
 
-        this.$alert(
+        /* this.$alert(
           "<p><strong>应有实体的数量： <i>" +
           res.data[0] +
           "</i> 个</strong></p>" +
@@ -282,7 +287,13 @@ export default {
           {
             dangerouslyUseHTMLString: true
           }
-        );
+        ); */
+        this.$alert("结构化知识抽取完成！","finish!",{dangerouslyUseHTMLString: true});
+        // this.$notify({
+        //   title: 'finish',
+        //   message: '结构化知识抽取结果',
+        //   type: 'success'
+        // });
       }).catch((res)=>{
           console.log(res)
         this.loadingRes = false;

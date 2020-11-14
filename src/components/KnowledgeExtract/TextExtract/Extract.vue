@@ -307,7 +307,7 @@
               border
             >
               <el-table-column prop="title2" label="测试数据"></el-table-column>
-              <el-table-column label="操作" width="160" align="center">
+              <el-table-column label="操作" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -316,6 +316,17 @@
                     plain
                     size="small"
                   >浏览</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column label="抽取" width="80" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    @click.stop="handleAnalysis3(scope.row)"
+                    type="primary"
+                    plain
+                    size="small"
+                  >抽取</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -370,6 +381,9 @@
                 </div>
                 <div v-if="divStatus == 3" style="width: 100%;height: 100%">
                   <v-echart id="graph1" :style="{width: graphWidth,height:graphHeight}" :options="echartsOptions"></v-echart>
+                </div>
+                <div v-if="divStatus == 4" style="width: 100%;height: 100%">
+                  <v-echart id="graph2" :style="{width: graphWidth,height:graphHeight}" :options="echartsOptions"></v-echart>
                 </div>
             </div>
             <!-- <el-table
@@ -763,15 +777,14 @@ export default {
       this.fullscreenLoading = true;
       if(this.fileIndex != "") {
         this.showTable = 3;
-        let fd = new FormData();
-        fd.append("contents", this.fileIndex);
         this.$http
-          .post("http://39.102.71.123:23352/pic/text_extract", fd, {
+          .post("http://39.102.71.123:23352/pic/text_extract_list", {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           })
           .then(res => {
+            console.log("res:",res);
             this.fullscreenLoading = false;
             this.textData = "";
             this.testData = res.data.map(cur => {
@@ -1591,7 +1604,7 @@ export default {
       fd.append("contents", this.fileIndex);
       fd.append("filename", row.title2);
       this.$http
-        .post("http://39.102.71.123:23352/pic/view_text_extract_results", fd, {
+        .post("http://39.102.71.123:23352/pic/text_extract_view", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -1599,6 +1612,35 @@ export default {
         .then(res => {
           this.fullscreenLoading = false;
           console.log("res",res);
+
+          this.$alert(
+            "<p>" + res.data + "</p>",
+            "文书内容",
+            {
+              dangerouslyUseHTMLString: true,
+            }
+          );
+        })
+        .catch(error => {
+          this.fullscreenLoading = false;
+          console.log(error);
+        })
+    },
+    //抽取
+    handleAnalysis3(row) {
+      this.fullscreenLoading = true;
+      this.divStatus = 4;
+      let fd = new FormData();
+      fd.append("filename",row.title2);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/text_extract_demo", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(res => {
+          console.log("res",res);
+          this.fullscreenLoading = false;
 
           let categories = [
             {

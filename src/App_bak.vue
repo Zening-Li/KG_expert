@@ -2,48 +2,48 @@
   <div id="app">
     <el-container>
       <!-- 顶部导航栏-->
-      <el-header>
-        <div id="logo" style="position:absolute; left:30px; top:3px;">
+      <!-- <el-header> -->
+        <!-- <div id="logo" style="position:absolute; left:30px; top:3px;">
           <img src="./assets/KGLogo.png" />
           <span style="margin-left:10px;font-size:large;font-weight:bold;">军事知识管理系统</span>
-        </div>
-        <el-row type="flex" justify="end">
+        </div> -->
+        <!-- <el-row type="flex" justify="end"> -->
           <!-- <el-col id="logo" :span="3">
             <img src="./assets/KGLogo.png" />
             作战文书管理系统
-          </el-col> -->
-          <el-col style="position:relative;">
+          </el-col>-->
+          <!-- <el-col style="position:relative;">
             <MyMenu />
           </el-col>
           <el-col id="user" :span="2">
             <MyDropdown :username="usrName" ref="menuIndex" />
-          </el-col>
-        </el-row>
-      </el-header>
+          </el-col> -->
+        <!-- </el-row> -->
+      <!-- </el-header> -->
       <el-container style="height:calc(100% - 60px);">
-        <el-aside style="width:200px;overflow-x:hidden;">
-          <el-menu
+        <!-- <el-aside style="width:200px;overflow-x:hidden;"> -->
+          <!-- <el-menu
             background-color="#343643"
             text-color="#fff"
             active-text-color="#fff"
             :router="true"
-          >
+          > -->
             <!--数据浏览菜单-->
-            <el-menu-item index="/RelationalData" v-if="activeIndex==='/relationalData'">
+            <!-- <el-menu-item index="/RelationalData" v-if="activeIndex==='/relationalData'">
               <i class="el-icon-menu"></i>
               <span slot="title">结构化数据浏览</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <!--数据标注菜单-->
-            <el-menu-item index="/definelabel" v-if="activeIndex==='/definelabel'">
+            <!-- <el-menu-item index="/definelabel" v-if="activeIndex==='/definelabel'">
               <i class="el-icon-menu"></i>
               <span slot="title">模式定义</span>
-            </el-menu-item>
-            <el-menu-item index="/corpustagging" v-if="activeIndex==='/definelabel'">
+            </el-menu-item> -->
+            <!-- <el-menu-item index="/corpustagging" v-if="activeIndex==='/definelabel'">
               <i class="el-icon-document"></i>
               <span slot="title">语料标注</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <!--知识抽取菜单-->
-            <el-submenu index="1" v-if="activeIndex==='/'">
+            <!-- <el-submenu index="1" v-if="activeIndex==='/'">
               <template slot="title">
                 <i class="el-icon-s-grid"></i>
                 <span>结构化数据抽取</span>
@@ -55,10 +55,9 @@
                 <el-menu-item index="/deNoise">属性去噪</el-menu-item>
                 <el-menu-item index="/entityMatch">实体对齐</el-menu-item>
                 <el-menu-item index="/extractTest">抽取测试</el-menu-item>
-                <el-menu-item index="/entitymatcholdversion">结构化数据标注</el-menu-item>
               </el-menu-item-group>
-            </el-submenu>
-            <el-submenu index="2" v-if="activeIndex==='/'">
+            </el-submenu> -->
+            <!-- <el-submenu index="2" v-if="activeIndex==='/'">
               <template slot="title">
                 <i class="el-icon-document"></i>
                 <span>文本抽取</span>
@@ -68,8 +67,8 @@
                 <el-menu-item index="/extract?algorithm=1">文本抽取</el-menu-item>
                 <el-menu-item index="/predict">模型预测</el-menu-item>
               </el-menu-item-group>
-            </el-submenu>
-            <el-menu-item index="/imageLabel" v-if="activeIndex==='/'">
+            </el-submenu> -->
+            <!-- <el-menu-item index="/imageLabel" v-if="activeIndex==='/'">
               <i class="el-icon-collection-tag"></i>
               <span slot="title">图片标注</span>
             </el-menu-item>
@@ -92,27 +91,23 @@
             <el-menu-item index="/extractVideo" v-if="activeIndex==='/'">
               <i class="el-icon-video-camera"></i>
               <span slot="title">视频抽取</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <!--知识校正菜单-->
-            <el-menu-item index="/correct" v-if="activeIndex==='/correct'">
+            <!-- <el-menu-item index="/correct" v-if="activeIndex==='/correct'">
               <i class="el-icon-edit"></i>
               <span slot="title">知识校正</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <!--知识检索菜单-->
-            <el-menu-item index="/entitysearch" v-if="activeIndex==='/entitySearch'">
+            <!-- <el-menu-item index="/entitysearch" v-if="activeIndex==='/entitySearch'">
               <i class="el-icon-menu"></i>
               <span slot="title">实体检索</span>
-            </el-menu-item>
-            <el-menu-item index="/relationsearch" v-if="activeIndex==='/entitySearch'">
+            </el-menu-item> -->
+            <!-- <el-menu-item index="/relationsearch" v-if="activeIndex==='/entitySearch'">
               <i class="el-icon-search"></i>
               <span slot="title">关系检索</span>
-            </el-menu-item>
-            <el-menu-item index="/relationsearch2" v-if="activeIndex==='/entitySearch'">
-              <i class="el-icon-search"></i>
-              <span slot="title">两跳关系检索</span>
-            </el-menu-item>
-          </el-menu>
-        </el-aside>
+            </el-menu-item> -->
+          <!-- </el-menu> -->
+        <!-- </el-aside> -->
         <el-main>
           <router-view />
         </el-main>
@@ -122,15 +117,15 @@
 </template>
 
 <script>
-import MyMenu from "./components/MyMenu";
-import MyDropdown from "./components/MyDropdown";
+// import MyMenu from "./components/MyMenu";
+// import MyDropdown from "./components/MyDropdown";
 import { mapGetters } from "vuex";
 export default {
   name: "App",
-  components: {
-    MyMenu,
-    MyDropdown
-  },
+  // components: {
+  //   MyMenu,
+  //   MyDropdown
+  // },
   data() {
     return {
       usrName: "Admin"

@@ -137,7 +137,7 @@
       return {
         loadingRes:false,
         sourceIndex:"",
-        sourceList:["structData", "structData2","structData3"],
+        sourceList:["海战场装备性能库1", "海战场装备性能库2","海战场装备性能库3"],
         sourceFlag:true,
         isList:true,
         fileCount:0,
