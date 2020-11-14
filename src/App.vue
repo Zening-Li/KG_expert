@@ -105,12 +105,12 @@
             </el-menu-item>
             <el-menu-item index="/relationsearch" v-if="activeIndex==='/entitySearch'">
               <i class="el-icon-search"></i>
-              <span slot="title">关系检索</span>
+              <span slot="title">属性检索</span>
             </el-menu-item>
-            <el-menu-item index="/relationsearch2" v-if="activeIndex==='/entitySearch'">
+            <!-- <el-menu-item index="/relationsearch2" v-if="activeIndex==='/entitySearch'">
               <i class="el-icon-search"></i>
               <span slot="title">两跳关系检索</span>
-            </el-menu-item>
+            </el-menu-item> -->
           </el-menu>
         </el-aside>
         <el-main>

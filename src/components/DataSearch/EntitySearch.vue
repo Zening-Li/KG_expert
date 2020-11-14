@@ -95,16 +95,12 @@ export default {
       inputEntity: "",
       levelList: [
         {
-          label: "一级查询",
+          label: "精确查询",
           value: 1
         },
         {
-          label: "二级查询",
+          label: "关键词查询",
           value: 2
-        },
-        {
-          label: "三级查询",
-          value: 3
         }
       ],
       level: 1,

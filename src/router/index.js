@@ -9,7 +9,7 @@ import CorpusTagging from "../components/DataLabel/CorpusTag/CorpusTagging";
 import RelationalData from "../components/DataView/RelationalData";
 import EntitySearch from "../components/DataSearch/EntitySearch";
 import RelationSearch from "../components/DataSearch/RelationSearch";
-import RelationSearch2 from "../components/DataSearch/RelationSearch2";
+// import RelationSearch2 from "../components/DataSearch/RelationSearch2";
 import ExtractStruct from "../components/KnowledgeExtract/StructExtract/ExtractStruct"
 import ShowDict from "../components/KnowledgeExtract/TextExtract/ShowDict"
 import ShowOntology from "../components/KnowledgeExtract/StructExtract/ShowOntology"
@@ -84,11 +84,6 @@ export default new Router({
       path: '/relationsearch',
       name: '/relationSearch',
       component: RelationSearch,
-    },
-    {
-      path: '/relationsearch2',
-      name: '/relationSearch2',
-      component: RelationSearch2,
     },
     {
       path: '/entitymatch',

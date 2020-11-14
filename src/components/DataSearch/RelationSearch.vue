@@ -4,22 +4,23 @@
     <el-main>
       <!--顶部-->
       <div class="header">
-        关系检索
+        属性检索
       </div>
       <el-divider></el-divider>
       <!--中心-->
       <!--列表页-->
       <div class="main" >
         <!--搜索栏-->
-        <el-input v-model="inputEntity1" placeholder="实体1"></el-input>
-        <el-input v-model="inputRelation" placeholder="关系"></el-input>
-        <el-input v-model="inputEntity2" placeholder="实体2"></el-input>
-        <el-select v-model="level" placeholder="请选择查询级数">
+        <el-input v-model="inputEntity1" placeholder="实体"></el-input>
+        <el-input v-model="inputRelation" :placeholder="iptPlaceholder"></el-input>
+        <!-- <el-input v-model="inputEntity2" placeholder="实体2"></el-input> -->
+        <el-select v-model="level" placeholder="请选择查询级数" @change="optionChange">
           <el-option
             v-for="item in levelList"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
+            :value="item.value"
+            >
           </el-option>
         </el-select>
         <el-button style="margin-left:20px;height: 40px" class="darkBtn" size="small" @click="onSearchClick">搜索</el-button>
@@ -90,22 +91,23 @@
           tableData: [],
           searchDone:false,
           inputEntity1:'',
-          inputEntity2:'',
+          // inputEntity2:'',
           inputRelation:'',
-          levelList:[{
-            label:"一级查询",
-            value:1
-          },{
-            label:"二级查询",
-            value:2
-          },{
-            label:"三级查询",
-            value:3
-          }],
+          levelList: [
+            {
+              label: "精确查询",
+              value: 1
+            },
+            {
+              label: "关键词查询",
+              value: 2
+            }
+          ],
           level:1,
           loadingRes:false,
           searchTime:"",
           tupleNum:0,
+          iptPlaceholder: "属性",
           //图谱
           graphWidth:"100%",
           graphHeight:"100%",
@@ -113,9 +115,17 @@
       },
 
       methods:{
-
+        //select改变时触发
+        optionChange() {
+          if(this.level == 1) {
+            this.iptPlaceholder = "属性";
+          }else if(this.level == 2) {
+            this.iptPlaceholder = "属性值关键词";
+          }
+        },
+        //搜索
         onSearchClick(){
-          if(this.inputEntity1 === '' && this.inputEntity2 === '' && this.inputRelation === '' && !this.searchDone)
+          if(this.inputEntity1 === '' && this.inputRelation === '' && !this.searchDone)
           {
             return;
           }
@@ -123,7 +133,7 @@
           this.loadingRes=true;
           let Myoption = JSON.parse(JSON.stringify(option));
           //空值检索
-          if(this.inputEntity1 === '' && this.inputEntity2 === '' && this.inputRelation === '')
+          if(this.inputEntity1 === '' && this.inputRelation === '')
           {
             myChart= echarts.init(document.getElementById('kgPic'));
             // 绘制图表
@@ -135,7 +145,7 @@
           /*逻辑和实体检索类似*/
           let fd = new FormData();
           fd.append("entity1",this.inputEntity1);
-          fd.append("entity2",this.inputEntity2);
+          // fd.append("entity2",this.inputEntity2);
           fd.append("relation",this.inputRelation);
           fd.append("number",this.level);
           this.$http.post('http://39.102.71.123:23352/neo/search_relation',fd).then((res) =>
@@ -170,13 +180,13 @@
                         category: 3
                       });
                     }
-                    else if(tmp.entity1===this.inputEntity2){
-                      targetType2=2*j;
-                      graphPoint.push({
-                        name: tmp.entity1,
-                        category: 4
-                      });
-                    }
+                    // else if(tmp.entity1===this.inputEntity2){
+                    //   targetType2=2*j;
+                    //   graphPoint.push({
+                    //     name: tmp.entity1,
+                    //     category: 4
+                    //   });
+                    // }
                     else if(j !== 2) {
                       graphPoint.push({
                         name: tmp.entity1,
@@ -199,13 +209,13 @@
                         category: 3
                       });
                     }
-                    else if(tmp.entity2===this.inputEntity2){
-                      targetType2=2*j+1;
-                      graphPoint.push({
-                        name: tmp.entity2,
-                        category: 4
-                      });
-                    }
+                    // else if(tmp.entity2===this.inputEntity2){
+                    //   targetType2=2*j+1;
+                    //   graphPoint.push({
+                    //     name: tmp.entity2,
+                    //     category: 4
+                    //   });
+                    // }
                     else {
                       graphPoint.push({
                         name: tmp.entity2,
