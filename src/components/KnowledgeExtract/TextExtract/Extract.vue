@@ -655,7 +655,7 @@ export default {
       isMerge: false,
       //模型列表
       modelIndex: "",
-      modelList: ["ckpt_1", "ckpt_2", "ckpt_3", "ckpt_4", "ckpt_5"],
+      modelList: ["实体抽取模型1", "实体抽取模型2", "实体抽取模型3", "实体抽取模型4", "实体抽取模型5"],
       //图谱
       graphWidth: "100%",
       graphHeight: "100%",

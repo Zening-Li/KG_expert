@@ -36,6 +36,13 @@
           <el-button
             class="darkBtn"
             size="small"
+            style="float: right;margin-right: 20px;"
+            @click="resultExport"
+            :disabled="exportDis"
+          >结果导出</el-button>
+          <el-button
+            class="darkBtn"
+            size="small"
             style="float:right; margin-right:20px;"
             @click="extractStruct"
             :disabled="btnDisable"
@@ -126,6 +133,7 @@ export default {
   name: "ExtractTest",
   data() {
     return {
+      exportDis: true,
       number: 0,
       numberArr: [],
       numberStr: "",
@@ -200,6 +208,7 @@ export default {
         })
         .then(res => {
           this.loadingRes = false;
+          this.exportDis = true; //结果导出按钮禁用
           this.number = res.data[1].length;
           this.columnNames=[]
           this.columnNames = res.data[0].map(cur => {
@@ -213,8 +222,8 @@ export default {
             return res;
           });
 
-          console.log(this.columnNames)
-          console.log(this.tableData)
+          console.log("this.columnNames", this.columnNames)
+          console.log("this.tableData", this.tableData)
         })
         .catch(res => {
           this.loadingRes = false;
@@ -294,10 +303,40 @@ export default {
         //   message: '结构化知识抽取结果',
         //   type: 'success'
         // });
+        this.exportDis = false; //结果导出按钮放开
       }).catch((res)=>{
           console.log(res)
         this.loadingRes = false;
       })
+    },
+    //结果导出
+    resultExport() {
+      this.loadingRes = true;
+      let fd = new FormData();
+      fd.append("contents", this.testIndex);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/export_struct_test_results", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          console.log("res.data",res.data);
+
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+
+          this.loadingRes = false;
+        })
+        .catch(error => {
+          console.log(error);
+          this.loadingRes = false;
+        })
     },
     //计算平均结果
     calculateAverage() {

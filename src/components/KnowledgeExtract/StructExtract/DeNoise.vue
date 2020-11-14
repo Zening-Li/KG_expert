@@ -181,18 +181,18 @@ export default {
       unionList: [],
       allTable: [
         {
-          value: "structData",
-          label: "structData",
+          value: "海战场装备性能库1",
+          label: "海战场装备性能库1",
           level: 1
         },
         {
-          value: "structData2",
-          label: "structData2",
+          value: "海战场装备性能库2",
+          label: "海战场装备性能库2",
           level: 1
         },
         {
-          value: "structData3",
-          label: "structData3",
+          value: "海战场装备性能库3",
+          label: "海战场装备性能库3",
           level: 1
         }
       ],
