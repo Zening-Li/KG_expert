@@ -40,39 +40,50 @@
           <!-- <span>现有正样例：{{positiveCount}}个</span> -->
           <div id="searchInfo">
             实体数据容量 : {{tupleNum}}个
-            <span style="float:right; margin-right:20px;">查询时间：{{searchTime}}秒</span>
+            <span style="float:right; margin-right:20px;">查询时间：{{searchTime}}秒</span><br>
+            <span style="float:left; margin-right:20px;">检索记录共{{searchNumber}}条</span>
           </div>
         </div>
-        <div class="result" v-if="searchDone">
+        <div class="result" v-if="searchDone" style="clear: both;">
           <!--关系图谱-->
           <div
             id="kgPic"
             v-loading="loadingRes"
             element-loading-text="正在搜索中，请稍等……"
             element-loading-spinner="el-icon-loading"
+            v-if="level == 1"
           >
-            <div class="title">关系图谱</div>
+            <div class="title">知识图谱</div>
             <div id="graph" :style="{width: graphWidth,height:graphHeight}"></div>
           </div>
           <!--三元组列表-->
           <el-table
-            :data="tableData"
+            :data="tableData.slice((curPage - 1) * 10, curPage * 10)"
             :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
-            :height="60+50*tableData.length"
             border
             v-loading="loadingRes"
+            v-if="level == 1"
           >
             <el-table-column prop="entity1" label="实体1" fixed></el-table-column>
             <el-table-column prop="relation" label="关系"></el-table-column>
             <el-table-column prop="entity2" label="实体2"></el-table-column>
           </el-table>
+          <el-table
+            :data="tableData.slice((curPage - 1) * 10, curPage * 10)"
+            :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+            border
+            v-loading="loadingRes"
+            v-if="level == 2"
+          >
+            <el-table-column prop="entity" label="关键词查询结果" fixed></el-table-column>
+          </el-table>
           <!-- 分页符-->
-          <!-- <el-pagination
+          <el-pagination
             background
             layout="prev, pager, next"
             :total="fileCount"
             @current-change="handleCurrentChange">
-          </el-pagination>-->
+          </el-pagination>
         </div>
       </div>
     </el-main>
@@ -89,6 +100,8 @@ export default {
   data() {
     return {
       loadingRes:false,
+      fileCount: 0,
+      curPage: 1,
       //表格数据
       tableData: [],
       searchDone: false,
@@ -106,6 +119,7 @@ export default {
       level: 1,
       loadingRes: false,
       searchTime: "",
+      searchNumber: 0,
       tupleNum: 0,
       graphWidth:"100%",
       graphHeight:"100%",
@@ -140,6 +154,11 @@ export default {
           alert("出错了！")
         })
     },
+    //分页
+    handleCurrentChange(cpage) {
+      this.curPage = cpage;
+    },
+    //搜索
     onSearchClick() {
       if (this.inputEntity === "" && !this.searchDone) {
         return;
@@ -159,15 +178,15 @@ export default {
         return;
       }
 
-      let fd = new FormData();
-      fd.append("entity1", this.inputEntity);
-      fd.append("entity2", "");
-      fd.append("relation", "");
-      fd.append("number", this.level);
-      this.$http
-        .post("http://39.102.71.123:23352/neo/search_entity", fd)
+      if(this.level == 1) {
+        //精确查询
+        let fd = new FormData();
+        fd.append("entity", this.inputEntity);
+        this.$http
+        .post("http://39.102.71.123:23352/neo/search_entity_accurate", fd)
         .then(res => {
           console.log(res.data);
+          this.searchNumber = res.data[3];
           if (
             res.data[0][1].length === 0 &&
             res.data[0][2].length === 0 &&
@@ -179,7 +198,6 @@ export default {
             this.loadingRes = false;
             return;
           }
-          this.tableData = [];
           // let graphPoint=[{name:this.inputEntity,category:0}];
           // let graphLink=[];
           // //遍历关系
@@ -211,7 +229,6 @@ export default {
           //     }
           //   }
           // }
-
           let graphPoint = [];
           let graphLink = [];
           let pointName = new Set();
@@ -337,6 +354,7 @@ export default {
             }
           });
           this.loadingRes = false;
+          this.fileCount = res.data[0][2].length;
         })
         .catch(res => {
           this.loadingRes = false;
@@ -349,6 +367,27 @@ export default {
           this.tableData = [];
           return;
         });
+      }else if(this.level == 2) {
+        //关键词查询
+        let fd = new FormData();
+        fd.append("entity", this.inputEntity);
+        this.$http
+          .post("http://39.102.71.123:23352/neo/search_entity_keyWords", fd)
+          .then(res => {
+            console.log("res",res);
+            this.searchTime = res.data[1]; //查询时间
+            this.searchNumber = res.data[3]; //检索记录
+            this.tableData = res.data[0].map(cur => {
+              return { entity: cur }
+            })
+            this.fileCount = res.data[0].length;
+            this.loadingRes = false;
+          })
+          .catch(error => {
+            console.log(error);
+            this.loadingRes = false;
+          })
+      }
     }
   },
   mounted(){

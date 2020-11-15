@@ -775,36 +775,28 @@ export default {
     //文本知识抽取
     textExtract() {
       this.fullscreenLoading = true;
-      if(this.fileIndex != "") {
-        this.showTable = 3;
-        this.$http
-          .post("http://39.102.71.123:23352/pic/text_extract_list", {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then(res => {
-            console.log("res:",res);
-            this.fullscreenLoading = false;
-            this.textData = "";
-            this.testData = res.data.map(cur => {
-              return { title2: cur };
-            });
-            this.numberStr = res.data.toString();
-            this.fileCountTest = this.testData.length;
-            this.sourceFlag = false; //返回按钮
-          })
-          .catch(error => {
-            console.log(error);
-            this.fullscreenLoading = false;
-          })
-      }else if(this.fileIndex == "") {
-        this.fullscreenLoading = false;
-        this.$message({
-          message: "请先加载测试数据！",
-          type: "warning"
+      this.showTable = 3;
+      this.$http
+        .post("http://39.102.71.123:23352/pic/text_extract_list", {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
-      }
+        .then(res => {
+          console.log("res:",res);
+          this.fullscreenLoading = false;
+          this.textData = "";
+          this.testData = res.data.map(cur => {
+            return { title2: cur };
+          });
+          this.numberStr = res.data.toString();
+          this.fileCountTest = this.testData.length;
+          this.sourceFlag = false; //返回按钮
+        })
+        .catch(error => {
+          console.log(error);
+          this.fullscreenLoading = false;
+        })
     },
     loadAlgorithm() {
       if (this.showFlag === 2) {

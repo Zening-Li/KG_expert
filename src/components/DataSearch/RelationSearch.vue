@@ -28,7 +28,8 @@
           <!-- <span>现有正样例：{{positiveCount}}个</span> -->
           <div id="searchInfo">
             实体数据容量 : {{tupleNum}}个
-            <span style="float:right; margin-right:20px;">查询时间：{{searchTime}}秒</span>
+            <span style="float:right; margin-right:20px;">查询时间：{{searchTime}}秒</span><br>
+            <span style="float:left; margin-right:20px;">检索记录：{{searchNumber}}条</span>
           </div>
         </div>
         <div class="result" v-if="searchDone" style="margin-bottom:50px;">
@@ -45,7 +46,6 @@
           <el-table
             :data="tableData"
             :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
-            height="626"
             border
             v-loading="loadingRes">
             <el-table-column
@@ -106,6 +106,7 @@
           level:1,
           loadingRes:false,
           searchTime:"",
+          searchNumber: 0,
           tupleNum:0,
           iptPlaceholder: "属性",
           //图谱
@@ -125,16 +126,14 @@
         },
         //搜索
         onSearchClick(){
-          if(this.inputEntity1 === '' && this.inputRelation === '' && !this.searchDone)
-          {
+          if(this.inputEntity1 === '' && this.inputRelation === '' && !this.searchDone) {
             return;
           }
           this.searchDone=true;
           this.loadingRes=true;
           let Myoption = JSON.parse(JSON.stringify(option));
           //空值检索
-          if(this.inputEntity1 === '' && this.inputRelation === '')
-          {
+          if(this.inputEntity1 === '' && this.inputRelation === '') {
             myChart= echarts.init(document.getElementById('kgPic'));
             // 绘制图表
             myChart.setOption(Myoption, true);
@@ -143,298 +142,292 @@
             return;
           }
           /*逻辑和实体检索类似*/
-          let fd = new FormData();
-          fd.append("entity1",this.inputEntity1);
-          // fd.append("entity2",this.inputEntity2);
-          fd.append("relation",this.inputRelation);
-          fd.append("number",this.level);
-          this.$http.post('http://39.102.71.123:23352/neo/search_relation',fd).then((res) =>
-            {
-              console.log(res);
-              if(res.data[0][1].length === 0&&res.data[0][2].length === 0&&res.data[0][0].length === 0){
-                this.$message({
-                  message: '未查询到相关信息！',
-                  type: 'warning'
-                });
-                this.loadingRes=false;
-                return;
-              }
-              let graphPoint = [];
-              let graphLink = [];
-              let pointName = new Set();
-              this.tableData = [];
-              let targetType1,targetType2;
-              let order = [0, 1, 2];
-              for (let j of order){
-                for (let i = 0; i < res.data[0][j].length; i++) {
-                  let tmp = {};
-                  tmp.entity1 = res.data[0][j][i][0]+"";
-                  tmp.relation = res.data[0][j][i][1]+"";
-                  tmp.entity2 = res.data[0][j][i][2]+"";
-                  if (!pointName.has(tmp.entity1)) {
-                    pointName.add(tmp.entity1);
-                    if(tmp.entity1===this.inputEntity1){
-                      targetType1=2*j;
-                      graphPoint.push({
-                        name: tmp.entity1,
-                        category: 3
-                      });
-                    }
-                    // else if(tmp.entity1===this.inputEntity2){
-                    //   targetType2=2*j;
-                    //   graphPoint.push({
-                    //     name: tmp.entity1,
-                    //     category: 4
-                    //   });
-                    // }
-                    else if(j !== 2) {
-                      graphPoint.push({
-                        name: tmp.entity1,
-                        category: j
-                      });
-                    }
-                    else{
-                      graphPoint.push({
-                        name: tmp.entity1,
-                        category: 1
-                      });
-                    }
-                  }
-                  if (!pointName.has(tmp.entity2)) {
-                    pointName.add(tmp.entity2);
-                    if(tmp.entity2===this.inputEntity1){
-                      targetType1=2*j+1;
-                      graphPoint.push({
-                        name: tmp.entity2,
-                        category: 3
-                      });
-                    }
-                    // else if(tmp.entity2===this.inputEntity2){
-                    //   targetType2=2*j+1;
-                    //   graphPoint.push({
-                    //     name: tmp.entity2,
-                    //     category: 4
-                    //   });
-                    // }
-                    else {
-                      graphPoint.push({
-                        name: tmp.entity2,
-                        category: j
-                      });
-                    }
-                  }
-                  graphLink.push({
-                    source: tmp.entity1,
-                    target: tmp.entity2,
-                    name: tmp.relation,
-                    des: tmp.relation
+          if(this.level == 1) {
+            //精确查询
+            let fd = new FormData();
+            fd.append("entity",this.inputEntity1);
+            // fd.append("entity2",this.inputEntity2);
+            fd.append("relation",this.inputRelation);
+            this.$http
+              .post('http://39.102.71.123:23352/neo/search_attribute_accurate',fd)
+              .then((res) => {
+                console.log(res);
+                if(res.data[0][1].length === 0&&res.data[0][2].length === 0&&res.data[0][0].length === 0){
+                  this.$message({
+                    message: '未查询到相关信息！',
+                    type: 'warning'
                   });
-                  this.tableData.push({
-                    entity1:tmp.entity1,
-                    entity2:tmp.entity2,
-                    relation:tmp.relation,
-                  })
+                  this.loadingRes=false;
+                  return;
                 }
-              }
-              if(targetType1===0||targetType1===1)
-                Myoption["series"][0]["categories"].push({
-                  name: "检索目标1",
-                  symbol: "rect",
-                  symbolSize:60
+                let graphPoint = [];
+                let graphLink = [];
+                let pointName = new Set();
+                this.tableData = [];
+                let targetType1,targetType2;
+                let order = [0, 1, 2];
+                for (let j of order){
+                  for (let i = 0; i < res.data[0][j].length; i++) {
+                    let tmp = {};
+                    tmp.entity1 = res.data[0][j][i][0]+"";
+                    tmp.relation = res.data[0][j][i][1]+"";
+                    tmp.entity2 = res.data[0][j][i][2]+"";
+                    if (!pointName.has(tmp.entity1)) {
+                      pointName.add(tmp.entity1);
+                      if(tmp.entity1===this.inputEntity1){
+                        targetType1=2*j;
+                        graphPoint.push({
+                          name: tmp.entity1,
+                          category: 3
+                        });
+                      }
+                      // else if(tmp.entity1===this.inputEntity2){
+                      //   targetType2=2*j;
+                      //   graphPoint.push({
+                      //     name: tmp.entity1,
+                      //     category: 4
+                      //   });
+                      // }
+                      else if(j !== 2) {
+                        graphPoint.push({
+                          name: tmp.entity1,
+                          category: j
+                        });
+                      }
+                      else{
+                        graphPoint.push({
+                          name: tmp.entity1,
+                          category: 1
+                        });
+                      }
+                    }
+                    if (!pointName.has(tmp.entity2)) {
+                      pointName.add(tmp.entity2);
+                      if(tmp.entity2===this.inputEntity1){
+                        targetType1=2*j+1;
+                        graphPoint.push({
+                          name: tmp.entity2,
+                          category: 3
+                        });
+                      }
+                      // else if(tmp.entity2===this.inputEntity2){
+                      //   targetType2=2*j+1;
+                      //   graphPoint.push({
+                      //     name: tmp.entity2,
+                      //     category: 4
+                      //   });
+                      // }
+                      else {
+                        graphPoint.push({
+                          name: tmp.entity2,
+                          category: j
+                        });
+                      }
+                    }
+                    graphLink.push({
+                      source: tmp.entity1,
+                      target: tmp.entity2,
+                      name: tmp.relation,
+                      des: tmp.relation
+                    });
+                    this.tableData.push({
+                      entity1:tmp.entity1,
+                      entity2:tmp.entity2,
+                      relation:tmp.relation,
+                    })
+                  }
+                }
+                if(targetType1===0||targetType1===1)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标1",
+                    symbol: "rect",
+                    symbolSize:60
+                  });
+                else if(targetType1<5)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标1",
+                    symbol: "circle",
+                    symbolSize:60
+                  });
+                else
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标1",
+                    symbol: "roundRect",
+                    symbolSize:60
+                  });
+                if(targetType2===0||targetType2===1)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标2",
+                    symbol: "rect",
+                    symbolSize:60
+                  });
+                else if(targetType2<5)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标2",
+                    symbol: "circle",
+                    symbolSize:60
+                  });
+                else
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标2",
+                    symbol: "roundRect",
+                    symbolSize:60
+                  });
+                Myoption["legend"] = [];
+                Myoption["legend"].push({
+                  data: Myoption["series"][0]["categories"].map(function (a) {
+                    return {name:a.name,icon:a.symbol}
+                  })
                 });
-              else if(targetType1<5)
-                Myoption["series"][0]["categories"].push({
-                  name: "检索目标1",
-                  symbol: "circle",
-                  symbolSize:60
-                });
-              else
-                Myoption["series"][0]["categories"].push({
-                  name: "检索目标1",
-                  symbol: "roundRect",
-                  symbolSize:60
-                });
-              if(targetType2===0||targetType2===1)
-                Myoption["series"][0]["categories"].push({
-                  name: "检索目标2",
-                  symbol: "rect",
-                  symbolSize:60
-                });
-              else if(targetType2<5)
-                Myoption["series"][0]["categories"].push({
-                  name: "检索目标2",
-                  symbol: "circle",
-                  symbolSize:60
-                });
-              else
-                Myoption["series"][0]["categories"].push({
-                  name: "检索目标2",
-                  symbol: "roundRect",
-                  symbolSize:60
-                });
-              Myoption["legend"] = [];
-              Myoption["legend"].push({
-                data: Myoption["series"][0]["categories"].map(function (a) {
-                  return {name:a.name,icon:a.symbol}
-                })
-              });
-              Myoption["series"][0]["data"] = graphPoint;
-              Myoption["series"][0]["links"] = graphLink;
-              Myoption["series"][0]["edgeLabel"]["normal"]["formatter"] = function (x) {
-                return x.data.name;
-              };
+                Myoption["series"][0]["data"] = graphPoint;
+                Myoption["series"][0]["links"] = graphLink;
+                Myoption["series"][0]["edgeLabel"]["normal"]["formatter"] = function (x) {
+                  return x.data.name;
+                };
 
-              myChart = echarts.init(document.getElementById("graph"));
-              // 绘制图表
-              myChart.setOption(Myoption, true);
+                myChart = echarts.init(document.getElementById("graph"));
+                // 绘制图表
+                myChart.setOption(Myoption, true);
 
-              this.searchTime=res.data[1];
-              this.tupleNum = res.data[2];
+                this.searchTime=res.data[1];
+                this.searchNumber = res.data[3];
+                this.tupleNum = res.data[2];
 
-		        	// let graphPoint = [];
-			// let graphLink = [];
-			// let pointSet = new Set();
-			// for(let i = 0; i < res.data.searchResult.length; i ++){
-			// 	let tmp = {};
-			// 	let tableflag = 0;
-			// 	tmp.entity1 = res.data.searchResult[i].n1.title;
-			// 	tmp.entity2 = res.data.searchResult[i].n2.title;
-			// 	tmp.relation = res.data.searchResult[i].rel.type;
-          //
-			// 	for(let j = 0; j < this.tableData.length; j++ ){
-			// 		if(this.tableData[j].entity1 == tmp.entity1 && this.tableData[j].entity2 == tmp.entity2 && this.tableData[j].relation == tmp.relation)tableflag = 1;
-			// 	}
-			// 	if(tableflag == 0)this.tableData.push(tmp);
-			// 	if(!pointSet.has(tmp.entity1)) {
-			// 	  pointSet.add(tmp.entity1);
-			// 	  graphPoint.push({name:tmp.entity1,category:0,des:tmp.entity1});
-			// 	}
-			// 	if(!pointSet.has(tmp.entity2)) {
-			// 	  pointSet.add(tmp.entity2);
-			// 	  graphPoint.push({name:tmp.entity2,category:1,des:tmp.entity2});
-			// 	}
-          //
-			// 	graphLink.push({
-			// 	  source: tmp.entity1,
-			// 	  target: tmp.entity2,
-			// 	  name: tmp.relation,
-			// 	  des: tmp.entity1 + "->" + tmp.entity2
-			// 	});
-			//   }
-          //
-          // let categories=[
-          //         {name:'entity1'},
-          //         {name:'entity2'},
-          //       ];
-          //
-          // let option ={
-          //         // 提示框的配置
-          //         tooltip: {
-          //           formatter: function (x) {
-          //             return x.data.des;
-          //           }
-          //         },
-          //
-          // // 工具箱
-          //       toolbox: {
-          //           // 显示工具箱
-          //           show: true,
-          //           feature: {
-          //             mark: {
-          //               show: true
-          //             },
-          //             // 还原
-          //             restore: {
-          //               show: true
-          //             },
-          //             // 保存为图片
-          //             saveAsImage: {
-          //               show: true
-          //             }
-          //           }
-          //         },
-          //         legend: [{
-          //           // selectedMode: 'single',
-          //           data: categories.map(function (a) {
-          //             return a.name;
-          //           })
-          //         }],
-          //
-          //         series: [{
-          //           type: 'graph', // 类型:关系图
-          //           layout: 'force', //图的布局，类型为力导图
-          //           symbolSize: 40, // 调整节点的大小
-          //           roam: true, // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移,可以设置成 'scale' 或者 'move'。设置成 true 为都开启
-          //           edgeSymbol: ['circle', 'arrow'],
-          //           edgeSymbolSize: [2, 10],
-          //           edgeLabel: {
-          //             normal: {
-          //               textStyle: {
-          //                 fontSize: 20
-          //               }
-          //             }
-          //           },
-          //           force: {
-          //             repulsion: 2500,
-          //             edgeLength: [10, 50]
-          //           },
-          //           draggable: true,
-          //           lineStyle: {
-          //             normal: {
-          //               width: 2,
-          //               color: '#4b565b',
-          //             }
-          //           },
-          //           edgeLabel: {
-          //             normal: {
-          //               show: true,
-          //               formatter: function (x) {
-          //                 return x.data.name;
-          //               }
-          //             }
-          //           },
-          //           label: {
-          //             normal: {
-          //               show: true,
-          //               textStyle: {}
-          //             }
-          //           },
-          //           // 数据
-          //           data:graphPoint,
-          //           links:graphLink,
-          //           categories: categories,
-          //         }],
-          //         grid:{
-          //           top:"10px",
-          //           bottom:"10px",
-          //           height:"10px",
-          //           width:"10px"
-          //         }
-          //       };
-          //       myChart= echarts.init(document.getElementById('kgPic'));
-          //       // 绘制图表
-          //       myChart.setOption(option);
-              myChart.on('click',function(params){
+                // let graphPoint = [];
+            // let graphLink = [];
+            // let pointSet = new Set();
+            // for(let i = 0; i < res.data.searchResult.length; i ++){
+            // 	let tmp = {};
+            // 	let tableflag = 0;
+            // 	tmp.entity1 = res.data.searchResult[i].n1.title;
+            // 	tmp.entity2 = res.data.searchResult[i].n2.title;
+            // 	tmp.relation = res.data.searchResult[i].rel.type;
+                //
+            // 	for(let j = 0; j < this.tableData.length; j++ ){
+            // 		if(this.tableData[j].entity1 == tmp.entity1 && this.tableData[j].entity2 == tmp.entity2 && this.tableData[j].relation == tmp.relation)tableflag = 1;
+            // 	}
+            // 	if(tableflag == 0)this.tableData.push(tmp);
+            // 	if(!pointSet.has(tmp.entity1)) {
+            // 	  pointSet.add(tmp.entity1);
+            // 	  graphPoint.push({name:tmp.entity1,category:0,des:tmp.entity1});
+            // 	}
+            // 	if(!pointSet.has(tmp.entity2)) {
+            // 	  pointSet.add(tmp.entity2);
+            // 	  graphPoint.push({name:tmp.entity2,category:1,des:tmp.entity2});
+            // 	}
+                //
+            // 	graphLink.push({
+            // 	  source: tmp.entity1,
+            // 	  target: tmp.entity2,
+            // 	  name: tmp.relation,
+            // 	  des: tmp.entity1 + "->" + tmp.entity2
+            // 	});
+            //   }
+                //
+                // let categories=[
+                //         {name:'entity1'},
+                //         {name:'entity2'},
+                //       ];
+                //
+                // let option ={
+                //         // 提示框的配置
+                //         tooltip: {
+                //           formatter: function (x) {
+                //             return x.data.des;
+                //           }
+                //         },
+                //
+                // // 工具箱
+                //       toolbox: {
+                //           // 显示工具箱
+                //           show: true,
+                //           feature: {
+                //             mark: {
+                //               show: true
+                //             },
+                //             // 还原
+                //             restore: {
+                //               show: true
+                //             },
+                //             // 保存为图片
+                //             saveAsImage: {
+                //               show: true
+                //             }
+                //           }
+                //         },
+                //         legend: [{
+                //           // selectedMode: 'single',
+                //           data: categories.map(function (a) {
+                //             return a.name;
+                //           })
+                //         }],
+                //
+                //         series: [{
+                //           type: 'graph', // 类型:关系图
+                //           layout: 'force', //图的布局，类型为力导图
+                //           symbolSize: 40, // 调整节点的大小
+                //           roam: true, // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移,可以设置成 'scale' 或者 'move'。设置成 true 为都开启
+                //           edgeSymbol: ['circle', 'arrow'],
+                //           edgeSymbolSize: [2, 10],
+                //           edgeLabel: {
+                //             normal: {
+                //               textStyle: {
+                //                 fontSize: 20
+                //               }
+                //             }
+                //           },
+                //           force: {
+                //             repulsion: 2500,
+                //             edgeLength: [10, 50]
+                //           },
+                //           draggable: true,
+                //           lineStyle: {
+                //             normal: {
+                //               width: 2,
+                //               color: '#4b565b',
+                //             }
+                //           },
+                //           edgeLabel: {
+                //             normal: {
+                //               show: true,
+                //               formatter: function (x) {
+                //                 return x.data.name;
+                //               }
+                //             }
+                //           },
+                //           label: {
+                //             normal: {
+                //               show: true,
+                //               textStyle: {}
+                //             }
+                //           },
+                //           // 数据
+                //           data:graphPoint,
+                //           links:graphLink,
+                //           categories: categories,
+                //         }],
+                //         grid:{
+                //           top:"10px",
+                //           bottom:"10px",
+                //           height:"10px",
+                //           width:"10px"
+                //         }
+                //       };
+                //       myChart= echarts.init(document.getElementById('kgPic'));
+                //       // 绘制图表
+                //       myChart.setOption(option);
+                myChart.on('click',function(params){
                   let obj = params.data;
                   console.log(obj);
-                  if(obj.hasOwnProperty("source"))//links
-                  {
-                    ////obj.source+obj.name+obj.target 头节点、关系、尾节点
-                    // this.$http.get('http://39.102.71.123:23352/search_entity?head='+obj.source+"&relation="+obj.name+"&tail="+obj.target).then(
-                    //   (res) => {
-                    //   })
+                  if(obj.hasOwnProperty("source")) { //links
                     alert("1");
-                  }
-                  else //points
-                  {
-                    ////实体名为obj.name
-                    // this.$http.get('http://39.102.71.123:23352/search_entity?entity='+obj.name).then((res) => {
-                    // })
+                  }else { //points
                     alert("2");
                   }
                 });
-              this.loadingRes=false;
-              }).catch((res)=>{
+                this.loadingRes=false;
+              })
+              .catch((res)=>{
                 this.loadingRes=false;
                 console.log(res);
                 myChart= echarts.init(document.getElementById('kgPic'));
@@ -443,7 +436,164 @@
                 this.tableData = [];
                 return;
               })
-            }
+          }else if(this.level == 2) {
+            //关键词查询
+            let fd = new FormData();
+            fd.append("entity",this.inputEntity1);
+            fd.append("relation",this.inputRelation);
+            this.$http
+              .post("http://39.102.71.123:23352/neo/search_attribute_keyWords", fd)
+              .then(res => {
+                console.log(res);
+                if(res.data[0][1].length === 0&&res.data[0][2].length === 0&&res.data[0][0].length === 0){
+                  this.$message({
+                    message: '未查询到相关信息！',
+                    type: 'warning'
+                  });
+                  this.loadingRes=false;
+                  return;
+                }
+                let graphPoint = [];
+                let graphLink = [];
+                let pointName = new Set();
+                this.tableData = [];
+                let targetType1,targetType2;
+                let order = [0, 1, 2];
+                for (let j of order){
+                  for (let i = 0; i < res.data[0][j].length; i++) {
+                    let tmp = {};
+                    tmp.entity1 = res.data[0][j][i][0]+"";
+                    tmp.relation = res.data[0][j][i][1]+"";
+                    tmp.entity2 = res.data[0][j][i][2]+"";
+                    if (!pointName.has(tmp.entity1)) {
+                      pointName.add(tmp.entity1);
+                      if(tmp.entity1===this.inputEntity1){
+                        targetType1=2*j;
+                        graphPoint.push({
+                          name: tmp.entity1,
+                          category: 3
+                        });
+                      }
+                      else if(j !== 2) {
+                        graphPoint.push({
+                          name: tmp.entity1,
+                          category: j
+                        });
+                      }
+                      else{
+                        graphPoint.push({
+                          name: tmp.entity1,
+                          category: 1
+                        });
+                      }
+                    }
+                    if (!pointName.has(tmp.entity2)) {
+                      pointName.add(tmp.entity2);
+                      if(tmp.entity2===this.inputEntity1){
+                        targetType1=2*j+1;
+                        graphPoint.push({
+                          name: tmp.entity2,
+                          category: 3
+                        });
+                      }
+                      else {
+                        graphPoint.push({
+                          name: tmp.entity2,
+                          category: j
+                        });
+                      }
+                    }
+                    graphLink.push({
+                      source: tmp.entity1,
+                      target: tmp.entity2,
+                      name: tmp.relation,
+                      des: tmp.relation
+                    });
+                    this.tableData.push({
+                      entity1:tmp.entity1,
+                      entity2:tmp.entity2,
+                      relation:tmp.relation,
+                    })
+                  }
+                }
+                if(targetType1===0||targetType1===1)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标1",
+                    symbol: "rect",
+                    symbolSize:60
+                  });
+                else if(targetType1<5)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标1",
+                    symbol: "circle",
+                    symbolSize:60
+                  });
+                else
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标1",
+                    symbol: "roundRect",
+                    symbolSize:60
+                  });
+                if(targetType2===0||targetType2===1)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标2",
+                    symbol: "rect",
+                    symbolSize:60
+                  });
+                else if(targetType2<5)
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标2",
+                    symbol: "circle",
+                    symbolSize:60
+                  });
+                else
+                  Myoption["series"][0]["categories"].push({
+                    name: "检索目标2",
+                    symbol: "roundRect",
+                    symbolSize:60
+                  });
+                Myoption["legend"] = [];
+                Myoption["legend"].push({
+                  data: Myoption["series"][0]["categories"].map(function (a) {
+                    return {name:a.name,icon:a.symbol}
+                  })
+                });
+                Myoption["series"][0]["data"] = graphPoint;
+                Myoption["series"][0]["links"] = graphLink;
+                Myoption["series"][0]["edgeLabel"]["normal"]["formatter"] = function (x) {
+                  return x.data.name;
+                };
+
+                myChart = echarts.init(document.getElementById("graph"));
+                // 绘制图表
+                myChart.setOption(Myoption, true);
+
+                this.searchTime=res.data[1];
+                this.searchNumber = res.data[3];
+                this.tupleNum = res.data[2];
+
+                myChart.on('click',function(params){
+                  let obj = params.data;
+                  console.log(obj);
+                  if(obj.hasOwnProperty("source")) { //links
+                    alert("1");
+                  }else { //points
+                    alert("2");
+                  }
+                });
+                this.loadingRes=false;
+              })
+              .catch(res => {
+                this.loadingRes=false;
+                console.log(res);
+                myChart= echarts.init(document.getElementById('kgPic'));
+                // 绘制图表
+                myChart.setOption(Myoption, true);
+                this.tableData = [];
+                return;
+              })
+          }
+        }
       },
     }
 </script>

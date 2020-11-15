@@ -18,10 +18,16 @@
         <!--表格查看-->
         <div class="top-tip" v-if="sourceFlag">
           <span>请选择数据源：</span>
-          <el-select v-model="sourceIndex" placeholder size="small" style="margin-left:52px;">
+          <el-select v-model="sourceIndex" placeholder size="small" style="margin:0 15px;">
             <el-option v-for="(item, index) in sourceList" :key="index" :label="item" :value="item"></el-option>
           </el-select>
-          <el-button style="margin-left:20px;" class="blueBtn" size="small" @click="chooseSource">确定</el-button>
+          <!-- <el-button style="margin-left:20px;" class="blueBtn" size="small" @click="chooseSource">确定</el-button> -->
+
+          <span>映射方式：</span>
+          <el-select v-model="mapIndex" size="small" style="margin:0 15px;" placeholder>
+            <el-option v-for="(item, index) in mapList" :key="index" :label="item" :value="item"></el-option>
+          </el-select>
+          <el-button style="margin-left:20px;" class="blueBtn" size="small" @click="chooseMap">确定</el-button>
         </div>
         <div class="top-tip" v-if="!sourceFlag">
           <div style="width:100%">
@@ -225,6 +231,8 @@ export default {
       propertyKey: -1,
       sourceIndex: "",
       sourceList: ["海战场装备性能库1", "海战场装备性能库2","海战场装备性能库3"],
+      mapIndex: "",
+      mapList: ["自动映射", "手动映射"],
       tableIndex: "",
       properties: [],
       tableData: [],
@@ -300,6 +308,7 @@ export default {
       this.sourceIndex = "";
       this.typeSelect = "";
       this.sourceFlag = true;
+      this.mapIndex = "";
     },
     removeTag(tag) {
       if (tag.type === "warning") {
@@ -610,6 +619,7 @@ export default {
           this.fullscreenLoading = false;
         });
     },
+    //确定
     chooseSource() {
       if (this.sourceIndex === "") {
         this.$message({
@@ -633,6 +643,58 @@ export default {
         .catch(res => {
           console.log(res);
         });
+    },
+    //确定
+    chooseMap() {
+      this.fullscreenLoading = true;
+      //先判断数据源
+      console.log("this.sourceIndex",this.sourceIndex)
+      if (this.sourceIndex === "") {
+        this.fullscreenLoading = false;
+        this.$message({
+          message: "请先选择数据源",
+          type: "warning"
+        });
+        return;
+      }
+      //判断映射方式
+      if(this.mapIndex == "手动映射") {
+        let fd = new FormData();
+        fd.append("source", this.sourceIndex);
+        this.$http
+        .post("http://39.102.71.123:23352/pic/struct_data_source", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          this.fullscreenLoading = false;
+          this.properties = res.data;
+          this.sourceFlag = false;
+        })
+        .catch(res => {
+          console.log(res);
+          this.fullscreenLoading = false;
+        });
+      }else if(this.mapIndex == "自动映射") {
+        let fd = new FormData();
+        fd.append("source", this.sourceIndex);
+        this.$http
+          .post("http://39.102.71.123:23352/pic/extract_struct_database", fd, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
+          .then(res => {
+            this.fullscreenLoading = false;
+            console.log("res",res);
+            this.showGraph(res); //展示图谱
+          })
+          .catch(error => {
+            this.fullscreenLoading = false;
+            console.log(error);
+          })
+      }
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (this.entityIndex.indexOf(columnIndex) !== -1) {
