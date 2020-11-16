@@ -41,7 +41,7 @@
           <div id="searchInfo">
             实体数据容量 : {{tupleNum}}个
             <span style="float:right; margin-right:20px;">查询时间：{{searchTime}}秒</span><br>
-            <span style="float:left; margin-right:20px;">检索记录共{{searchNumber}}条</span>
+            <span>检索记录：{{searchNumber}}条</span>
           </div>
         </div>
         <div class="result" v-if="searchDone" style="clear: both;">
@@ -148,7 +148,8 @@ export default {
               dangerouslyUseHTMLString: true
             }
           );
-        }).catch(res => {
+        })
+        .catch(res => {
           console.log(res)
           this.loadingRes = false;
           alert("出错了！")
@@ -194,7 +195,8 @@ export default {
           ) {
             this.$message({
               message: '未查询到相关信息！',
-              type: 'warning'});
+              type: 'warning'
+            });
             this.loadingRes = false;
             return;
           }
@@ -322,9 +324,7 @@ export default {
           });
           Myoption["series"][0]["data"] = graphPoint;
           Myoption["series"][0]["links"] = graphLink;
-          Myoption["series"][0]["edgeLabel"]["normal"]["formatter"] = function(
-            x
-          ) {
+          Myoption["series"][0]["edgeLabel"]["normal"]["formatter"] = function(x) {
             return x.data.name;
           };
 

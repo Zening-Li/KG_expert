@@ -29,7 +29,7 @@
           <div id="searchInfo">
             实体数据容量 : {{tupleNum}}个
             <span style="float:right; margin-right:20px;">查询时间：{{searchTime}}秒</span><br>
-            <span style="float:left; margin-right:20px;">检索记录：{{searchNumber}}条</span>
+            <span>检索记录：{{searchNumber}}条</span>
           </div>
         </div>
         <div class="result" v-if="searchDone" style="margin-bottom:50px;">

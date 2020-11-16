@@ -132,10 +132,26 @@
           style="float: right; margin-right: 20px"
           @click="showThreshold = true"
           v-if="!resultFlag && !graphFlag"
-          >设置重合区域阈值</el-button
+          >设置重合区域阈值</el-button>
+        <el-button 
+          class="blueBtn headbutton" 
+          size="small" 
+          @click="loadList" 
+          v-if="!resultFlag&&!graphFlag"
+        >加载测试数据</el-button>
+        <el-select
+          v-model="fileIndex"
+          placeholder="请选择"
+          size="small"
+          style="float: right;margin-right: 10px;"
         >
-        <el-button class="blueBtn headbutton" size="small" @click="loadList"
-          v-if="!resultFlag&&!graphFlag">加载测试数据</el-button>
+          <el-option
+            v-for="(item, index) in fileIndexList"
+            :key="index"
+            :label="item"
+            :value="item"
+          ></el-option>
+        </el-select>
       </div>
       <el-divider></el-divider>
       <!--中心-->
@@ -328,6 +344,14 @@ export default {
           label: "三级查询",
           value: 3
         }
+      ],
+      fileIndex: "",
+      fileIndexList: [
+        "contents1",
+        "contents2",
+        "contents3",
+        "contents4",
+        "contents5",
       ],
       level: 1,
       graphFlag: false,
@@ -560,7 +584,9 @@ export default {
           this.fullscreenLoading = false;
         });
     },
+    //加载测试数据
     loadList() {
+      console.log(this.fileIndex);
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/load_picData", {
