@@ -6,8 +6,8 @@
       <div class="header">本体展示</div>
       <el-divider></el-divider>
       <!--中心-->
-      <div>
-        <span style="margin-left:10px;">请选择本体：</span>
+      <div class="top-tip">
+        <span>请选择本体：</span>
         <el-select v-model="typeSelect" placeholder size="small" style="margin-left:20px;">
           <el-option v-for="(item, index) in typeList" :key="index" :label="item" :value="item"></el-option>
         </el-select>
@@ -15,7 +15,7 @@
         <el-button type="primary" class="darkBtn headbutton" size="small" @click="isUpload=true">上传</el-button>
 
       </div>
-      <div class="result" style="margin-bottom:50px;">
+      <div class="result" style="margin-bottom:50px;margin-top:-10px">
         <div
           id="kgPic"
           v-loading="loadingResGraph"
@@ -250,7 +250,7 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
   background-color: #e9eef3;
@@ -279,9 +279,9 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
 }
 .headbutton {
   float: right;
@@ -347,20 +347,20 @@ body > .el-container {
 .blueBtn {
   margin-left: 5%;
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active,
 .blueBtn:focus {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {

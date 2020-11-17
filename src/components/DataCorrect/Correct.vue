@@ -130,16 +130,16 @@
     background-color: #F1F2F6;
     color: #333;
     text-align: center;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
 
   .header{
     height: 20px;
     line-height: 20px;
     text-align: left;
-    margin-left: 20px;
-    font-weight: bold;
-    font-size: large;
+    margin: 20px 0 0 20px;
+    /* font-weight: bold; */
+    /* font-size: 1.17em; */
   }
 
   .content{
@@ -157,18 +157,18 @@
 
   .blueBtn{
     background-color: #EFF0FF;
-    border: 1px solid #5775FB;
+    border: 1px solid #108cee;
     color: #5775FB;
   }
 
   .blueBtn:hover{
-    background-color: #5775FB;
+    background-color: #108cee;
     color: #FFFFFF;
   }
 
   #save{
-    background-color: #5775FB;
-    border: 1px solid #5775FB;
+    background-color: #108cee;
+    border: 1px solid #108cee;
     color: #FFFFFF;
   }
   #save:hover{

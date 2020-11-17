@@ -50,7 +50,7 @@
   }
   i:hover{
       color:#FFFFFF;
-      background-color: #5775FB;
+      background-color: #108cee;
   }
   .blue{
       color: #5775FB;

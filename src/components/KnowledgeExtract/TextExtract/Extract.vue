@@ -253,7 +253,7 @@
               v-if="showTable == 1"
               class="table"
               :data="testData.slice((curPageTrain - 1) * 10, curPageTrain * 10)"
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -278,7 +278,7 @@
               v-if="showTable == 2"
               class="table"
               :data="testData.slice((curPageTrain - 1) * 10, curPageTrain * 10)"
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -301,7 +301,7 @@
               v-if="showTable == 3"
               class="table"
               :data="testData.slice((curPageTrain - 1) * 10, curPageTrain * 10)"
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -355,7 +355,7 @@
               <span v-if="textData === '' && !isMerge">(选择文件以浏览内容)</span>
               <span v-if="textData === '' && isMerge">(正在加载合并文件)</span>
             </div>
-            <div style="padding: 0 15px;height: 100%;width:100%">
+            <div style="padding: 0 15px;width:100%">
               <pre
                 
                 style="
@@ -388,7 +388,7 @@
             </div>
             <!-- <el-table
               :data="testData.slice((curPageTest - 1) * 10, curPageTest * 10)"
-              :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+              :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
               height="626"
               style="width:97%;"
               border>
@@ -1760,9 +1760,10 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
+  /* padding: 0 !important; */
   background-color: #e9eef3;
   color: #333;
   text-align: left;
@@ -1789,9 +1790,10 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
+  margin-bottom: 20px;
 }
 .headbutton {
   float: right;
@@ -1799,8 +1801,9 @@ body > .el-container {
 }
 .top-tip {
   margin-top: -10px;
+  margin-left: 20px;
   margin-bottom: 20px;
-  padding-left: 20px;
+  padding-left: 0;
 }
 /*************内容中心*************/
 .main {
@@ -1867,20 +1870,20 @@ body > .el-container {
 /***********按钮样式***********/
 .blueBtn {
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active,
 .blueBtn:focus {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {
@@ -1890,11 +1893,11 @@ body > .el-container {
 .tableHeader {
   height: 55px;
   width: 100%;
-  background-color: #ebeef7;
+  background-color: #f6f7fb;
   color: #606266;
   line-height: 55px;
   padding: 0 10px;
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: 14px;
 }
 

@@ -321,7 +321,7 @@
   }
   .el-aside {
     background-color: #343643;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
   .el-main {
     background-color: #E9EEF3;
@@ -350,9 +350,9 @@
     height: 20px;
     line-height: 20px;
     text-align: left;
-    margin-left: 20px;
+    margin: 20px 0 0 20px;
     font-weight: bold;
-    font-size: large;
+    /* font-size: 1.17em; */
   }
   .headbutton{
     float: right;
@@ -424,18 +424,18 @@
   .blueBtn{
     margin-left: 5%;
     background-color: #EFF0FF;
-    border: 1px solid #5775FB;
+    border: 1px solid #108cee;
     color: #5775FB;
   }
 
   .blueBtn:hover,.blueBtn:active, .blueBtn:focus{
-    background-color: #5775FB;
+    background-color: #108cee;
     color: #FFFFFF;
   }
 
   .darkBtn{
-    background-color: #5775FB;
-    border: 1px solid #5775FB;
+    background-color: #108cee;
+    border: 1px solid #108cee;
     color: #FFFFFF;
   }
   .darkBtn:hover{
@@ -472,7 +472,7 @@
   .title{
     /* text-align: center; */
     font-weight: bold;
-    font-size: large;
+    /* font-size: 1.17em; */
     /* padding-bottom: 30px; */
   }
 

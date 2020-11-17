@@ -45,7 +45,7 @@
         <!--文书列表-->
         <el-table
           :data="tableData.slice((curPage - 1) * 10, curPage * 10)"
-          :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+          :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
           height="626"
           border>
           <el-table-column
@@ -183,8 +183,8 @@
     float: right;
   }
   .darkBtn{
-    background-color: #5775FB;
-    border: 1px solid #5775FB;
+    background-color: #108cee;
+    border: 1px solid #108cee;
     color: #FFFFFF;
   }
   .darkBtn:hover{
@@ -193,17 +193,17 @@
 
   .blueBtn{
     background-color: #EFF0FF;
-    border: 1px solid #5775FB;
+    border: 1px solid #108cee;
     color: #5775FB;
   }
 
   .blueBtn:hover,.blueBtn:active{
-    background-color: #5775FB;
+    background-color: #108cee;
     color: #FFFFFF;
   }
 
   .blueBtn:active{
-    background-color: #5775FB;
+    background-color: #108cee;
     color: #FFFFFF;
   }
 

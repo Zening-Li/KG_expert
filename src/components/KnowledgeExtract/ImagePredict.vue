@@ -213,7 +213,7 @@
           <el-col :span="12">
             <el-table
               :data="picList.slice((curPage - 1) * 10, curPage * 10)"
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -259,7 +259,7 @@
             </el-table>
             <el-table
               :data="testData.slice((curPage - 1) * 10, curPage * 10)"
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -369,7 +369,7 @@
               :data="
                 resultList.slice((curPageResult - 1) * 10, curPageResult * 10)
               "
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -775,7 +775,7 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
   background-color: #e9eef3;
@@ -804,9 +804,9 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
 }
 .headbutton {
   float: right;
@@ -875,20 +875,20 @@ body > .el-container {
 /***********按钮样式***********/
 .blueBtn {
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active,
 .blueBtn:focus {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {
@@ -897,8 +897,8 @@ body > .el-container {
 
 .tableHeader {
   height: 55px;
-  width: 100%;
-  background-color: #ebeef7;
+  width: 96.5%;
+  background-color: #f6f7fb;
   color: #606266;
   line-height: 55px;
   padding: 0 10px;

@@ -61,53 +61,21 @@
         <!--@click="showGraph"-->
         <!--v-if="!resultFlag&&!graphFlag"-->
         <!--&gt;加入图谱</el-button>-->
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float: right; margin-right: 20px"
-          @click="showHistory"
-          v-if="!resultFlag && !graphFlag"
-          >查看历史信息</el-button
-        >
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float: right; margin-right: 20px"
-          @click="showResults"
-          v-if="!resultFlag && !graphFlag"
-          >查看测试结果</el-button
-        >
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float: right; margin-right: 20px"
-          @click="modelTest"
-          v-if="!resultFlag && !graphFlag"
-          >模型测试</el-button
-        >
+        
+        
+        
 
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float: right; margin-right: 20px"
-          @click="showThreshold = true"
-          v-if="!resultFlag && !graphFlag"
-        >设置重合区域阈值</el-button>
-        <el-button
-          class="blueBtn headbutton"
-          size="small"
-          @click="loadList"
-          v-if="!resultFlag && !graphFlag"
-        >加载测试数据</el-button>
+        
+        
+        
+      </div>
+      <el-divider></el-divider>
+      <div class="top-tip" style="textAlign:left; clear:both;padding-left: 0">
         <el-select
           v-model="fileIndex"
           placeholder="请选择"
           size="small"
-          style="float: right;margin-right: 10px;"
+          style="margin-right: 10px;"
         >
           <el-option
             v-for="(item, index) in fileIndexList"
@@ -116,8 +84,70 @@
             :value="item"
           ></el-option>
         </el-select>
+        <el-button
+          class="blueBtn"
+          size="small"
+          style="margin-right: 20px"
+          v-if="!resultFlag && !graphFlag"
+          @click="loadList"
+        >加载测试数据</el-button>
+
+        <el-select
+          v-model="videoIndex"
+          size="small"
+          placeholder="请选择模型"
+          style="margin-right: 20px;"
+          v-if="!resultFlag && !graphFlag"
+        >
+          <el-option
+            v-for="(item, index) in videoIndexList"
+            :key="index"
+            :label="item"
+            :value="item"
+          ></el-option>
+        </el-select>
+        <el-button
+          class="blueBtn"
+          size="small"
+          style="margin-right: 20px"
+          v-if="!resultFlag && !graphFlag"
+          @click="chooseVideo"
+        >确定</el-button>
       </div>
-      <el-divider></el-divider>
+      <div class="top-tip" style="padding: 10px 0">
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right: 20px"
+          @click="showThreshold = true"
+          v-if="!resultFlag && !graphFlag"
+        >设置重合区域阈值</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right: 20px"
+          @click="modelTest"
+          v-if="!resultFlag && !graphFlag"
+        >模型测试</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right: 20px"
+          @click="showResults"
+          v-if="!resultFlag && !graphFlag"
+        >查看测试结果</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right: 20px"
+          @click="showHistory"
+          v-if="!resultFlag && !graphFlag"
+        >查看历史信息</el-button>
+      </div>
       <!--中心-->
       <!--      列表页-->
       <div class="main" v-if="!resultFlag && !graphFlag">
@@ -133,7 +163,7 @@
           <el-col :span="12">
             <el-table
               :data="vedioList.slice((curPage - 1) * 10, curPage * 10)"
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -205,7 +235,7 @@
         <!--<div style="text-align:center;font-size:large;">-&#45;&#45;&#45;&#45;以下内容仅为随机展示的部分结果-&#45;&#45;&#45;&#45;</div>-->
         <!--<div class="picStyle" v-for="(item, index) in resultList" :key="index">-->
         <!--<video :src="item" controls="controls" style="width:100%;"></video>-->
-        <!--<div style="text-align: center;font-weight: bold;width: 100%">-->
+        <!--<div style="text-align: center;/* font-weight: bold; */width: 100%">-->
         <!--视频{{index + 1}}-->
         <!--</div>-->
         <!--</div>-->
@@ -217,7 +247,7 @@
               :data="
                 resultList.slice((curPageResult - 1) * 10, curPageResult * 10)
               "
-              :header-cell-style="{ background: '#EBEEF7', color: '#606266' }"
+              :header-cell-style="{ background: '#F6F7FB', color: '#606266' }"
               height="626"
               style="width: 97%"
               border
@@ -326,6 +356,14 @@ export default {
         "contents3",
         "contents4",
         "contents5",
+      ],
+      videoIndex: "",
+      videoIndexList: [
+        "视频抽取模型1",
+        "视频抽取模型2",
+        "视频抽取模型3",
+        "视频抽取模型4",
+        "视频抽取模型5",
       ],
       //上传的文件列表
       fileList: [],
@@ -507,8 +545,10 @@ export default {
     loadList() {
       console.log(this.fileIndex);
       this.loadingRes = true;
+      let fd = new FormData();
+      fd.append("contents", this.fileIndex);
       this.$http
-        .post("http://39.102.71.123:23352/pic/load_videoData", {
+        .post("http://39.102.71.123:23352/pic/load_videoData", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -525,6 +565,13 @@ export default {
           alert("出错了！");
           this.loadingRes = false;
         });
+    },
+    //确定
+    chooseVideo() {
+      this.$message({
+        message: "加载模型 ‘" + this.videoIndex + "’ 成功！",
+        type: "success"
+      })
     },
     handleCurrentChange(cpage) {
       this.curPage = cpage;
@@ -676,7 +723,7 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
   background-color: #e9eef3;
@@ -705,9 +752,9 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
 }
 .headbutton {
   float: right;
@@ -715,6 +762,7 @@ body > .el-container {
 }
 .top-tip {
   margin-top: -10px;
+  margin-left: 20px;
   margin-bottom: 10px;
   padding-left: 20px;
 }
@@ -778,20 +826,20 @@ body > .el-container {
 /***********按钮样式***********/
 .blueBtn {
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active,
 .blueBtn:focus {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {
@@ -801,11 +849,11 @@ body > .el-container {
 .tableHeader {
   height: 55px;
   width: 100%;
-  background-color: #ebeef7;
+  background-color: #f6f7fb;
   color: #606266;
   line-height: 55px;
   padding: 0 10px;
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: 14px;
 }
 

@@ -59,7 +59,7 @@
           <!--三元组列表-->
           <el-table
             :data="tableData.slice((curPage - 1) * 10, curPage * 10)"
-            :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+            :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
             border
             v-loading="loadingRes"
             v-if="level == 1"
@@ -70,7 +70,7 @@
           </el-table>
           <el-table
             :data="tableData.slice((curPage - 1) * 10, curPage * 10)"
-            :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+            :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
             border
             v-loading="loadingRes"
             v-if="level == 2"
@@ -421,7 +421,7 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
   background-color: #e9eef3;
@@ -447,9 +447,9 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
 }
 /*************内容中心*************/
 .main {
@@ -487,7 +487,7 @@ body > .el-container {
   color: #606266;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   padding: 0 10px;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 /*表格*/
@@ -516,19 +516,19 @@ body > .el-container {
 /***********按钮样式***********/
 .blueBtn {
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {

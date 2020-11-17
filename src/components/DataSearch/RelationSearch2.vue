@@ -43,7 +43,7 @@
           <!--三元组列表-->
           <el-table
             :data="tableData"
-            :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+            :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
             height="626"
             border
             v-loading="loadingRes">
@@ -446,7 +446,7 @@
   }
   .el-aside {
     background-color: #343643;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
   .el-main {
     background-color: #E9EEF3;
@@ -472,9 +472,9 @@
     height: 20px;
     line-height: 20px;
     text-align: left;
-    margin-left: 20px;
-    font-weight: bold;
-    font-size: large;
+    margin: 20px 0 0 20px;
+    /* font-weight: bold; */
+    /* font-size: 1.17em; */
   }
   /*************内容中心*************/
   .main{
@@ -511,7 +511,7 @@
     color: #606266;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     padding: 0 10px;
-    font-weight: bold;
+    /* font-weight: bold; */
   }
 
   /*表格*/
@@ -540,18 +540,18 @@
   /***********按钮样式***********/
   .blueBtn{
     background-color: #EFF0FF;
-    border: 1px solid #5775FB;
+    border: 1px solid #108cee;
     color: #5775FB;
   }
 
   .blueBtn:hover,.blueBtn:active{
-    background-color: #5775FB;
+    background-color: #108cee;
     color: #FFFFFF;
   }
 
   .darkBtn{
-    background-color: #5775FB;
-    border: 1px solid #5775FB;
+    background-color: #108cee;
+    border: 1px solid #108cee;
     color: #FFFFFF;
   }
   .darkBtn:hover{

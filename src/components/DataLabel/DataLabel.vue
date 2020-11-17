@@ -52,7 +52,7 @@
 
   .el-aside {
     background-color: #343643;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
 
   .el-main {

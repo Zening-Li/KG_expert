@@ -80,7 +80,7 @@
       <div class="header">
         <i
           class="el-icon-back"
-          @click="resultFlag=false;graphFlag=false;"
+          @click="backBtn"
           v-if="resultFlag||graphFlag"
           style="margin-right:10px;"
         ></i>
@@ -101,49 +101,15 @@
           <!--@click="isUpload=true"-->
           <!--v-if="!resultFlag&&!graphFlag"-->
         <!--&gt;文件上传</el-button>-->
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float:right; margin-right:20px;"
-          @click="showHistory"
-          v-if="!resultFlag&&!graphFlag"
-        >查看历史信息</el-button>
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float:right; margin-right:20px;"
-          @click="showResults"
-          v-if="!resultFlag&&!graphFlag"
-        >查看测试结果</el-button>
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float:right; margin-right:20px;"
-          @click="modelTest"
-          v-if="!resultFlag&&!graphFlag"
-        >模型测试</el-button>
-        <el-button
-          type="primary"
-          class="darkBtn headbutton"
-          size="small"
-          style="float: right; margin-right: 20px"
-          @click="showThreshold = true"
-          v-if="!resultFlag && !graphFlag"
-          >设置重合区域阈值</el-button>
-        <el-button 
-          class="blueBtn headbutton" 
-          size="small" 
-          @click="loadList" 
-          v-if="!resultFlag&&!graphFlag"
-        >加载测试数据</el-button>
+      </div>
+      <el-divider></el-divider>
+      <div class="top-tip" style="textAlign:left; clear:both;padding-left: 0">
         <el-select
           v-model="fileIndex"
-          placeholder="请选择"
+          placeholder="请选择测试目录"
           size="small"
-          style="float: right;margin-right: 10px;"
+          style="margin-right: 20px;"
+          v-if="!resultFlag&&!graphFlag"
         >
           <el-option
             v-for="(item, index) in fileIndexList"
@@ -152,8 +118,71 @@
             :value="item"
           ></el-option>
         </el-select>
+        <el-button 
+          class="blueBtn" 
+          size="small" 
+          style="margin-right: 20px"
+          v-if="!resultFlag&&!graphFlag"
+          @click="loadList" 
+        >加载测试数据</el-button>
+
+        <el-select
+          v-model="picIndex"
+          size="small"
+          placeholder="请选择模型"
+          style="margin-right: 20px;"
+          v-if="!resultFlag&&!graphFlag"
+        >
+          <el-option
+            v-for="(item, index) in picIndexList"
+            :key="index"
+            :label="item"
+            :value="item"
+          ></el-option>
+        </el-select>
+        <el-button
+          type="primary"
+          class="blueBtn"
+          size="small"
+          style="margin-right: 20px"
+          @click="choosePic"
+          v-if="!resultFlag && !graphFlag"
+        >确定</el-button>
       </div>
-      <el-divider></el-divider>
+      <div class="top-tip" style="padding: 10px 0">
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right: 20px"
+          @click="showThreshold = true"
+          v-if="!resultFlag && !graphFlag"
+        >设置重合区域阈值</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right:20px;"
+          @click="modelTest"
+          v-if="!resultFlag&&!graphFlag"
+        >模型测试</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right:20px;"
+          @click="showResults"
+          v-if="!resultFlag&&!graphFlag"
+        >查看测试结果</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right:20px;"
+          @click="showHistory"
+          v-if="!resultFlag&&!graphFlag"
+        >查看历史信息</el-button>
+      </div>
       <!--中心-->
       <!--      列表页-->
       <div class="main" v-if="!resultFlag&&!graphFlag">
@@ -167,7 +196,7 @@
           <el-col :span="12">
             <el-table
               :data="picList.slice((curPage - 1) * 10, curPage * 10)"
-              :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+              :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
               height="626"
               style="width:97%"
               border
@@ -243,7 +272,7 @@
             <el-col :span="12">
               <el-table
                 :data="resultList.slice((curPageResult - 1) * 10, curPageResult * 10)"
-                :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+                :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
                 height="626"
                 style="width:97%"
                 border
@@ -352,6 +381,14 @@ export default {
         "contents3",
         "contents4",
         "contents5",
+      ],
+      picIndex: "",
+      picIndexList: [
+        "图片抽取模型1",
+        "图片抽取模型2",
+        "图片抽取模型3",
+        "图片抽取模型4",
+        "图片抽取模型5",
       ],
       level: 1,
       graphFlag: false,
@@ -478,32 +515,41 @@ export default {
       this.isUpload = false;
       this.uploadList = [];
     },
+    //查看测试结果
     showResults() {
-      this.resultFlag = true;
-      this.$http
-        .post("http://39.102.71.123:23352/pic/pic_test_results", {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(res => {
-          console.log(res);
-          this.resultList = res.data.map((url,index)=> {
-            let list;
-            if (url.indexOf("\\") === -1)
-              list = url.split("/");
-            else
-              list = url.split("\\");
-            return {
-              url: url, title: list[list.length - 1],
+      if(this.fileIndex == "") {
+        this.$message.error("请先选择测试目录！");
+      }else {
+        this.resultFlag = true;
+        let fd = new FormData();
+        fd.append("contents", this.fileIndex);
+        this.$http
+          .post("http://39.102.71.123:23352/pic/pic_test_results", fd, {
+            headers: {
+              "Content-Type": "multipart/form-data"
             }
           })
-        })
-        .catch(res => {
-          console.log(res);
-          alert("出错了！");
-        });
+          .then(res => {
+            console.log(res);
+            this.resultList = res.data.map((url,index)=> {
+              let list;
+              if (url.indexOf("\\") === -1)
+                list = url.split("/");
+              else
+                list = url.split("\\");
+              return {
+                url: url, title: list[list.length - 1],
+              }
+            })
+          })
+          .catch(res => {
+            console.log(res);
+            alert("出错了！");
+          });
+      }
+      
     },
+    //模型测试
     modelTest() {
       if(this.threshold===""){
         this.$message.error("请先设置重合区域阈值！");
@@ -512,6 +558,7 @@ export default {
       this.fullscreenLoading = true;
       let fd = new FormData();
       fd.append("IoU",this.threshold);
+      fd.append("contents", this.fileIndex);
       this.$http
         .post("http://39.102.71.123:23352/pic/pic_test", fd, {
           headers: {
@@ -584,12 +631,19 @@ export default {
           this.fullscreenLoading = false;
         });
     },
+    //返回按钮
+    backBtn() {
+      this.resultFlag = false;
+      this.graphFlag = false;
+      this.fileIndex = "";
+    },
     //加载测试数据
     loadList() {
-      console.log(this.fileIndex);
       this.loadingRes = true;
+      let fd = new FormData();
+      fd.append("contents", this.fileIndex);
       this.$http
-        .post("http://39.102.71.123:23352/pic/load_picData", {
+        .post("http://39.102.71.123:23352/pic/load_picData", fd, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -606,6 +660,13 @@ export default {
           alert("出错了！");
           this.loadingRes = false;
         });
+    },
+    //确定
+    choosePic() {
+      this.$message({
+        message: "加载模型 ‘" + this.picIndex + "’ 成功！",
+        type: "success"
+      })
     },
     handleCurrentChange(cpage) {
       this.curPage = cpage;
@@ -636,75 +697,81 @@ export default {
     },
     //查看历史信息
     showHistory() {
-      this.$http
-        .post("http://39.102.71.123:23352/pic/picTestHistory", {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(res => {
-          console.log(res)
-          this.$alert(
-            "<p><strong>目标实体数量： <i>" +
-            res.data[4] +
-            "</i> 个</strong></p>" +
-            "<p><strong>抽取目标数量： <i>" +
-            res.data[3] +
-            "</i> 个</strong></p>" +
-            "<p><strong>正确抽取目标数量： <i>" +
-            res.data[2] +
-            "</i> 个</strong></p>" +
-            "<p><strong>历史图像检测准确率： <i>" +
-            res.data[2] +"/"+res.data[3] +"="+res.data[0] +
-            "</i> %</strong></p>" +
-            "<p><strong>历史图像检测召回率： <i>" +
-            res.data[2] +"/"+res.data[4] +"="+res.data[1] +
-            "</i> %</strong></p>" +
-              "<p><strong>航母目标准确率： <i>" +
-            res.data[5]+
-              "</i> %</strong></p>" +
-              "<p><strong>航母目标召回率： <i>" +
-            res.data[6]+
-              "</i> %</strong></p>" +
-              "<p><strong>驱逐舰目标准确率： <i>" +
-            res.data[7]+
-              "</i> %</strong></p>"  +
-              "<p><strong>驱逐舰目标召回率： <i>" +
-            res.data[8]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标准确率： <i>" +
-            res.data[9]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标召回率： <i>" +
-            res.data[10]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标准确率： <i>" +
-            res.data[11]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标召回率： <i>" +
-            res.data[12]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标准确率： <i>" +
-            res.data[13]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标召回率： <i>" +
-            res.data[14]+
-              "</i> %</strong></p>" +
-              "<p><strong>飞机准确率： <i>" +
-              res.data[15]+
-              "</i> %</strong></p>"  +
-              "<p><strong>飞机召回率： <i>" +
-              res.data[16]+
-              "</i> %</strong></p>",
-            "历史测试结果",
-            {
-              dangerouslyUseHTMLString: true
+      if(this.fileIndex == "") {
+        this.$message.error("请先选择测试目录！");
+      }else {
+        let fd = new FormData();
+        fd.append("contents", this.fileIndex);
+        this.$http
+          .post("http://39.102.71.123:23352/pic/picTestHistory", fd, {
+            headers: {
+              "Content-Type": "multipart/form-data"
             }
-          );
-        })
-        .catch(res => {
-          console.log(res);
-        });
+          })
+          .then(res => {
+            console.log(res)
+            this.$alert(
+              "<p><strong>目标实体数量： <i>" +
+              res.data[4] +
+              "</i> 个</strong></p>" +
+              "<p><strong>抽取目标数量： <i>" +
+              res.data[3] +
+              "</i> 个</strong></p>" +
+              "<p><strong>正确抽取目标数量： <i>" +
+              res.data[2] +
+              "</i> 个</strong></p>" +
+              "<p><strong>历史图像检测准确率： <i>" +
+              res.data[2] +"/"+res.data[3] +"="+res.data[0] +
+              "</i> %</strong></p>" +
+              "<p><strong>历史图像检测召回率： <i>" +
+              res.data[2] +"/"+res.data[4] +"="+res.data[1] +
+              "</i> %</strong></p>" +
+                "<p><strong>航母目标准确率： <i>" +
+              res.data[5]+
+                "</i> %</strong></p>" +
+                "<p><strong>航母目标召回率： <i>" +
+              res.data[6]+
+                "</i> %</strong></p>" +
+                "<p><strong>驱逐舰目标准确率： <i>" +
+              res.data[7]+
+                "</i> %</strong></p>"  +
+                "<p><strong>驱逐舰目标召回率： <i>" +
+              res.data[8]+
+                "</i> %</strong></p>"  +
+                "<p><strong>护卫舰目标准确率： <i>" +
+              res.data[9]+
+                "</i> %</strong></p>"  +
+                "<p><strong>护卫舰目标召回率： <i>" +
+              res.data[10]+
+                "</i> %</strong></p>"  +
+                "<p><strong>巡洋舰目标准确率： <i>" +
+              res.data[11]+
+                "</i> %</strong></p>"  +
+                "<p><strong>巡洋舰目标召回率： <i>" +
+              res.data[12]+
+                "</i> %</strong></p>"  +
+                "<p><strong>战列舰目标准确率： <i>" +
+              res.data[13]+
+                "</i> %</strong></p>"  +
+                "<p><strong>战列舰目标召回率： <i>" +
+              res.data[14]+
+                "</i> %</strong></p>" +
+                "<p><strong>飞机准确率： <i>" +
+                res.data[15]+
+                "</i> %</strong></p>"  +
+                "<p><strong>飞机召回率： <i>" +
+                res.data[16]+
+                "</i> %</strong></p>",
+              "历史测试结果",
+              {
+                dangerouslyUseHTMLString: true
+              }
+            );
+          })
+          .catch(res => {
+            console.log(res);
+          });
+      }
     },
     //预测单个
     handleAnalysis(row) {
@@ -755,7 +822,7 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
   background-color: #e9eef3;
@@ -784,9 +851,9 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
 }
 .headbutton {
   float: right;
@@ -794,6 +861,7 @@ body > .el-container {
 }
 .top-tip {
   margin-top: -10px;
+  margin-left: 20px;
   margin-bottom: 10px;
   padding-left: 20px;
 }
@@ -855,20 +923,20 @@ body > .el-container {
 /***********按钮样式***********/
 .blueBtn {
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active,
 .blueBtn:focus {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {
@@ -877,8 +945,8 @@ body > .el-container {
 
 .tableHeader {
   height: 55px;
-  width: 100%;
-  background-color: #ebeef7;
+  width: 97%;
+  background-color: #f6f7fb;
   color: #606266;
   line-height: 55px;
   padding: 0 10px;

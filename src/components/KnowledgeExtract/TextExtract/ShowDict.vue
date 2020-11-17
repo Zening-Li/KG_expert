@@ -82,7 +82,7 @@
           <el-col :span="12">
             <el-table
               :data="tableData.slice((curPageFile - 1) * 10, curPageFile * 10)"
-              :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+              :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
               height="626"
               style="width:97%"
               border
@@ -134,7 +134,7 @@
           <el-col :span="12">
             <el-table
               :data="tableDataEntity.slice((curPageEntity - 1) * 10, curPageEntity * 10)"
-              :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+              :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
               height="550"
               style="width:97%"
               border
@@ -161,7 +161,7 @@
           <el-col :span="12">
             <el-table
               :data="tableDataRelation.slice((curPageRelation - 1) * 10, curPageRelation * 10)"
-              :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+              :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
               height="550"
               style="width:97%"
               border
@@ -636,7 +636,7 @@ body > .el-container {
 }
 .el-aside {
   background-color: #343643;
-  min-height: calc(100% - 60px);
+  min-height: calc(100% - 0px);
 }
 .el-main {
   background-color: #e9eef3;
@@ -665,9 +665,9 @@ body > .el-container {
   height: 20px;
   line-height: 20px;
   text-align: left;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: large;
+  margin: 20px 0 0 20px;
+  /* font-weight: bold; */
+  /* font-size: 1.17em; */
 }
 .headbutton {
   float: right;
@@ -709,20 +709,20 @@ body > .el-container {
 .blueBtn {
   margin-left: 5%;
   background-color: #eff0ff;
-  border: 1px solid #5775fb;
+  border: 1px solid #108cee;
   color: #5775fb;
 }
 
 .blueBtn:hover,
 .blueBtn:active,
 .blueBtn:focus {
-  background-color: #5775fb;
+  background-color: #108cee;
   color: #ffffff;
 }
 
 .darkBtn {
-  background-color: #5775fb;
-  border: 1px solid #5775fb;
+  background-color: #108cee;
+  border: 1px solid #108cee;
   color: #ffffff;
 }
 .darkBtn:hover {
@@ -733,17 +733,17 @@ body > .el-container {
   width: 150px;
   text-align: center;
   margin-top: 20px;
-  margin-left: 20px;
+  margin: 20px 0 0 20px;
 }
 
 .tableHeader {
   height: 55px;
   width: 100%;
-  background-color: #ebeef7;
+  background-color: #f6f7fb;
   color: #606266;
   line-height: 55px;
   padding: 0 10px;
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: 14px;
 }
   #daddy{

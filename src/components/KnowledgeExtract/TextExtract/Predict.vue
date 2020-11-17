@@ -103,7 +103,7 @@
           <el-col :span="12">
             <el-table
               :data="testData.slice((curPageTrain - 1) * 10, curPageTrain * 10)"
-              :header-cell-style="{background:'#EBEEF7',color:'#606266'}"
+              :header-cell-style="{background:'#F6F7FB',color:'#606266'}"
               height="626"
               style="width:97%"
               border
@@ -218,7 +218,11 @@
         //模型列表
         modelIndex: "",
         modelList: [
-          "ckpt_1", "ckpt_2", "ckpt_3", "ckpt_4", "ckpt_5"
+          "实体抽取模型1", 
+          "实体抽取模型2", 
+          "实体抽取模型3", 
+          "实体抽取模型4", 
+          "实体抽取模型5"
         ],
         //图谱
         graphWidth:"100%",
@@ -330,6 +334,7 @@
             this.loadingRes = false;
           });
       },
+      //加载训练模型
       loadModel() {
         let fd = new FormData();
         fd.append("model", this.modelIndex)
@@ -476,7 +481,7 @@
   }
   .el-aside {
     background-color: #343643;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
   .el-main {
     background-color: #e9eef3;
@@ -505,9 +510,9 @@
     height: 20px;
     line-height: 20px;
     text-align: left;
-    margin-left: 20px;
-    font-weight: bold;
-    font-size: large;
+    margin: 20px 0 0 20px;
+    /* font-weight: bold; */
+    /* font-size: 1.17em; */
   }
   .headbutton {
     float: right;
@@ -583,20 +588,20 @@
   /***********按钮样式***********/
   .blueBtn {
     background-color: #eff0ff;
-    border: 1px solid #5775fb;
+    border: 1px solid #108cee;
     color: #5775fb;
   }
 
   .blueBtn:hover,
   .blueBtn:active,
   .blueBtn:focus {
-    background-color: #5775fb;
+    background-color: #108cee;
     color: #ffffff;
   }
 
   .darkBtn {
-    background-color: #5775fb;
-    border: 1px solid #5775fb;
+    background-color: #108cee;
+    border: 1px solid #108cee;
     color: #ffffff;
   }
   .darkBtn:hover {
@@ -606,11 +611,11 @@
   .tableHeader {
     height: 55px;
     width: 100%;
-    background-color: #ebeef7;
+    background-color: #f6f7fb;
     color: #606266;
     line-height: 55px;
     padding: 0 10px;
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: 14px;
   }
 

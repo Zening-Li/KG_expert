@@ -20,7 +20,7 @@
           </el-col> -->
         <!-- </el-row> -->
       <!-- </el-header> -->
-      <el-container style="height:calc(100% - 60px);">
+      <el-container style="height:calc(100% - 0px);">
         <!-- <el-aside style="width:200px;overflow-x:hidden;"> -->
           <!-- <el-menu
             background-color="#343643"
@@ -194,6 +194,7 @@ body > .el-container {
 }
 
 .el-main {
+  padding: 0 !important;
   background-color: #e9eef3;
   color: #333;
   text-align: center;

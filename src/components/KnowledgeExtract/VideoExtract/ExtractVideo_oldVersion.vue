@@ -61,7 +61,7 @@
                 <source :src="item.src" type="video/mp4" />
                 您的浏览器不支持HTML5的vedio标签。
               </video> -->
-              <div style="text-align: center;font-weight: bold;width: 100%">文件名</div>
+              <div style="text-align: center;/* font-weight: bold; */width: 100%">文件名</div>
             </div>
             <v-echart :id="'graph'+index" class="graphStyle" :options="item.options" @click="clickChart"></v-echart>
           </div>
@@ -333,7 +333,7 @@
   }
   .el-aside {
     background-color: #343643;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
   .el-main {
     background-color: #E9EEF3;
@@ -363,9 +363,9 @@
     height: 20px;
     line-height: 20px;
     text-align: left;
-    margin-left: 20px;
-    font-weight: bold;
-    font-size: large;
+    margin: 20px 0 0 20px;
+    /* font-weight: bold; */
+    /* font-size: 1.17em; */
   }
   .headbutton{
     float: right;
@@ -436,20 +436,20 @@
   /***********按钮样式***********/
   .blueBtn{
     background-color: #EFF0FF;
-    border: 1px solid #5775FB;
+    border: 1px solid #108cee;
     color: #5775FB;
     height: 32px;
     margin-right: 20px;
   }
 
   .blueBtn:hover,.blueBtn:active, .blueBtn:focus{
-    background-color: #5775FB;
+    background-color: #108cee;
     color: #FFFFFF;
   }
 
   .darkBtn{
-    background-color: #5775FB;
-    border: 1px solid #5775FB;
+    background-color: #108cee;
+    border: 1px solid #108cee;
     color: #FFFFFF;
   }
   .darkBtn:hover{
@@ -483,8 +483,8 @@
 
   .title{
     text-align: left;
-    font-weight: bold;
-    font-size: large;
+    /* font-weight: bold; */
+    /* font-size: 1.17em; */
     padding-bottom: 30px;
   }
 

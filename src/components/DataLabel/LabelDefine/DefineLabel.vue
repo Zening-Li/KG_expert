@@ -186,7 +186,7 @@ this.$http.get('http://127.0.0.1:8000/api/add_book?book_name=' + 'testbook2')
     background-color: #F1F2F6;
     color: #333;
     text-align: center;
-    min-height: calc(100% - 60px);
+    min-height: calc(100% - 0px);
   }
 
 
@@ -195,9 +195,9 @@ this.$http.get('http://127.0.0.1:8000/api/add_book?book_name=' + 'testbook2')
     height: 20px;
     line-height: 20px;
     text-align: left;
-    margin-left: 20px;
-    font-weight: bold;
-    font-size: large;
+    margin: 20px 0 0 20px;
+    /* font-weight: bold; */
+    /* font-size: 1.17em; */
   }
   .content{
     min-height: calc(100% - 88px);
@@ -207,7 +207,7 @@ this.$http.get('http://127.0.0.1:8000/api/add_book?book_name=' + 'testbook2')
     padding:15px 20px 0 20px;
   }
   .title{
-    font-weight: bold;
+    /* font-weight: bold; */
     padding:10px 0 0 10px;
     justify-content: left;
     display: flex;
