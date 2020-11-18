@@ -207,17 +207,17 @@
             >
               <el-table-column prop="title" label="测试数据"></el-table-column>
               <el-table-column label="浏览" width="100" align="center">
-              <template slot-scope="scope">
-                <el-button
-                  class="blueBtn"
-                  @click="handleShow(scope.row)"
-                  type="primary"
-                  plain
-                  size="small"
-                >浏览</el-button>
-              </template>
-            </el-table-column>
-              <!-- <el-table-column label="预测" width="100" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    @click="handleShow(scope.row)"
+                    type="primary"
+                    plain
+                    size="small"
+                  >浏览</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column label="预测" width="100" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -227,7 +227,7 @@
                     size="small"
                   >预测</el-button>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
             <!-- 分页符-->
             <el-pagination

@@ -72,8 +72,9 @@
       <div class="top-tip" style="textAlign:left; clear:both;padding-left: 0">
         <el-select
           v-model="fileIndex"
-          placeholder="请选择"
+          placeholder="请选择测试目录"
           size="small"
+          v-if="!resultFlag && !graphFlag"
           style="margin-right: 10px;"
         >
           <el-option
@@ -95,7 +96,7 @@
           v-model="videoIndex"
           size="small"
           placeholder="请选择模型"
-          style="margin-right: 20px;"
+          style="margin-right: 10px;"
           v-if="!resultFlag && !graphFlag"
         >
           <el-option
@@ -111,7 +112,7 @@
           style="margin-right: 20px"
           v-if="!resultFlag && !graphFlag"
           @click="chooseVideo"
-        >确定</el-button>
+        >加载训练模型</el-button>
       </div>
       <div class="top-tip" style="padding: 10px 0">
         <el-button
@@ -168,7 +169,7 @@
               border
             >
               <el-table-column prop="title" label="测试数据"></el-table-column>
-              <el-table-column label="浏览" width="100" align="center">
+              <el-table-column label="浏览" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -176,11 +177,10 @@
                     type="primary"
                     plain
                     size="small"
-                    >浏览</el-button
-                  >
+                    >浏览</el-button>
                 </template>
               </el-table-column>
-              <!-- <el-table-column label="预测" width="100" align="center">
+              <el-table-column label="预测" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -188,10 +188,9 @@
                     type="primary"
                     plain
                     size="small"
-                    >预测</el-button
-                  >
+                  >预测</el-button>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
             <!-- 分页符-->
             <el-pagination
@@ -350,19 +349,19 @@ export default {
       curPageResult: 1,
       fileIndex: "",
       fileIndexList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5",
+        "军事视频目录1",
+        "军事视频目录2",
+        "军事视频目录3",
+        "军事视频目录4",
+        "军事视频目录5"
       ],
       videoIndex: "",
       videoIndexList: [
-        "视频抽取模型1",
-        "视频抽取模型2",
-        "视频抽取模型3",
-        "视频抽取模型4",
-        "视频抽取模型5",
+        "军事视频知识检测模型1",
+        "军事视频知识检测模型2",
+        "军事视频知识检测模型3",
+        "军事视频知识检测模型4",
+        "军事视频知识检测模型5"
       ],
       //上传的文件列表
       fileList: [],
@@ -444,10 +443,13 @@ export default {
         });
       this.inputEntity = "";
     },
+    //查看测试结果
     showResults() {
       this.resultFlag = true;
+      let fd = new FormData();
+      fd.append("contents",this.fileIndex);
       this.$http
-        .post("http://39.102.71.123:23352/pic/video_test_results", {
+        .post("http://39.102.71.123:23352/pic/video_test_results_1", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -489,6 +491,7 @@ export default {
 
       let fd = new FormData();
       fd.append("IoU",this.threshold);
+      fd.append("contents",this.fileIndex);
       this.$http
         .post("http://39.102.71.123:23352/pic/video_test", fd, {
           headers: {
@@ -564,8 +567,8 @@ export default {
     },
     //加载测试数据
     loadList() {
-      console.log(this.fileIndex);
       this.loadingRes = true;
+      
       let fd = new FormData();
       fd.append("contents", this.fileIndex);
       this.$http
@@ -587,7 +590,7 @@ export default {
           this.loadingRes = false;
         });
     },
-    //确定
+    //加载训练模型
     chooseVideo() {
       this.$message({
         message: "加载模型 ‘" + this.videoIndex + "’ 成功！",
@@ -600,11 +603,12 @@ export default {
     handleCurrentChangeResult(cpage) {
       this.curPageResult = cpage;
     },
-    //查看视频内容
+    //查看视频内容 浏览
     handleShow(row) {
       this.selectTitle = row.title;
       let fd = new FormData();
       fd.append("filename", row.title);
+      fd.append("contents",this.fileIndex)
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/view_videoData", fd, {
@@ -718,8 +722,24 @@ export default {
           console.log(res);
         });
     },
+    //浏览
     handleAnalysisResult(row) {
-      this.resultSrc = row;
+      let fd = new FormData();
+      fd.append("contents", this.fileIndex);
+      fd.append("filename", row);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/video_test_results_2", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(res => {
+          console.log("res",res);
+          this.resultSrc = res.data;
+        })
+        .catch(error => {
+          console.log(error);
+        })
     },
   },
 };

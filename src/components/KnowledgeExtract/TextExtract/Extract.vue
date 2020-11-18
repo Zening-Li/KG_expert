@@ -732,6 +732,7 @@ export default {
     },
     //多选
     handleSelectionChange(val) {
+      console.log(0);
       this.checkStatus = 1;
       this.allnot = 0;
       if(this.checkDis == false) {
@@ -1052,9 +1053,10 @@ export default {
     resultExport() {
       this.fullscreenLoading = true;
       let fd = new FormData();
-      // fd.append("", this.);
+      fd.append("contents", this.fileIndex);
+      fd.append("ALL_NOT", this.allnot.toString());
       this.$http
-        .post("", fd, {
+        .post("http://39.102.71.123:23352/pic/export_text_test_results", fd, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -1211,7 +1213,6 @@ export default {
             },
           })
           .then((res) => {
-            this.allnot = 1;
             this.fullscreenLoading = false;
             if (this.recallSet.length === 0)
               this.recallSet.push({
@@ -1249,29 +1250,30 @@ export default {
             }
 
             this.$alert(
-              "<p><strong>实际实体数量： <i>" +
-                res.data[4] +
-                "</i> 个</strong></p>" +
-                "<p><strong>抽取实体数量： <i>" +
-                res.data[3] +
-                "</i> 个</strong></p>" +
-                "<p><strong>正确抽取实体数量： <i>" +
-                res.data[2] +
-                "</i> 个</strong></p>" +
-                "<p><strong>实体抽取准确率： <i>" +
-                res.data[2] +
-                "/" +
-                res.data[3] +
-                "=" +
-                res.data[0] +
-                "</i> %</strong></p>" +
-                "<p><strong>实体抽取召回率： <i>" +
-                res.data[2] +
-                "/" +
-                res.data[4] +
-                "=" +
-                res.data[1] +
-                "</i> %</strong></p>",
+              // "<p><strong>实际实体数量： <i>" +
+              //   res.data[4] +
+              //   "</i> 个</strong></p>" +
+              //   "<p><strong>抽取实体数量： <i>" +
+              //   res.data[3] +
+              //   "</i> 个</strong></p>" +
+              //   "<p><strong>正确抽取实体数量： <i>" +
+              //   res.data[2] +
+              //   "</i> 个</strong></p>" +
+              //   "<p><strong>实体抽取准确率： <i>" +
+              //   res.data[2] +
+              //   "/" +
+              //   res.data[3] +
+              //   "=" +
+              //   res.data[0] +
+              //   "</i> %</strong></p>" +
+              //   "<p><strong>实体抽取召回率： <i>" +
+              //   res.data[2] +
+              //   "/" +
+              //   res.data[4] +
+              //   "=" +
+              //   res.data[1] +
+              //   "</i> %</strong></p>",
+              "finish!",
               this.algorithm + "合并测试结果",
               {
                 dangerouslyUseHTMLString: true,
