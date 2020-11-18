@@ -14,7 +14,7 @@ import ExtractStruct from "../components/KnowledgeExtract/StructExtract/ExtractS
 import ShowDict from "../components/KnowledgeExtract/TextExtract/ShowDict"
 import ShowOntology from "../components/KnowledgeExtract/StructExtract/ShowOntology"
 import EntityMatch from "../components/KnowledgeExtract/StructExtract/EntityMatch"
-import EntityMatchOldVersion from "../components/KnowledgeExtract/StructExtract/EntityMatch_oldVersion"
+import EntityMatchOldVersion from "../components/KnowledgeExtract/StructExtract/EntityMatch_oldVersion111"
 import DeNoise from "../components/KnowledgeExtract/StructExtract/DeNoise"
 import ViewData from "../components/KnowledgeExtract/StructExtract/ViewData"
 import ExtractTest from "../components/KnowledgeExtract/StructExtract/ExtractTest"
