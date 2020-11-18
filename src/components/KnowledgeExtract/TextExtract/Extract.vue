@@ -188,7 +188,7 @@
             class="darkBtn"
             size="small"
             style="float: right; margin-right: 8px"
-            v-if="showFlag === 1"
+            v-if="showFlag === 1 && !isMerge"
             @click="textExtract"
           >文本知识抽取</el-button>
           <el-button
@@ -199,14 +199,14 @@
             v-if="showFlag === 1"
             @click="showTestResult"
           >查看测试结果</el-button>
-          <el-button
+          <!-- <el-button
             class="darkBtn"
             size="small"
             style="float: right; margin-right: 8px"
             @click="calculateAverage"
             v-if="showFlag === 1 && isMerge"
             :disabled="calculateDis"
-          >计算平均结果</el-button>
+          >计算平均结果</el-button> -->
           <el-button
             class="darkBtn"
             size="small"
@@ -215,13 +215,12 @@
             v-if="showFlag === 1 && !isMerge"
           >合并</el-button>
           <el-button
-            type="primary"
             class="darkBtn"
             size="small"
-            style="float: right; margin-right: 8px"
-            @click="modelTest"
-            v-if="showFlag === 1"
-          >模型测试</el-button>
+            style="float: right;margin-right: 8px;"
+            v-if="showFlag === 1 && isMerge"
+            @click="resultExport"
+          >结果导出</el-button>
           <el-button
             class="darkBtn"
             size="small"
@@ -230,6 +229,14 @@
             :disabled="checkDis"
             v-if="showFlag === 1"
           >全选</el-button>
+          <el-button
+            type="primary"
+            class="darkBtn"
+            size="small"
+            style="float: right; margin-right: 8px"
+            @click="modelTest"
+            v-if="showFlag === 1"
+          >模型测试</el-button>
         </el-row>
         <div id="matchInfo" v-if="testData.length !== 0 && showTable == 1">
           <div>
@@ -567,7 +574,7 @@ export default {
       showTable : 1,
       numberArr: [],
       numberStr: "",
-      allnot: 0,
+      allnot: 1, //多选0，全选1
       //弹框
       outerVisible: false,
       innerVisible: false,
@@ -720,6 +727,7 @@ export default {
     //多选
     handleSelectionChange(val) {
       this.checkStatus = 1;
+      this.allnot = 0;
       if(this.checkDis == false) {
         this.checkedTxt = false;
         this.multipleSelection = val;
@@ -748,6 +756,7 @@ export default {
     },
     //全选
     checkAll() {
+      this.allnot = 1;
       this.checkedTxt = true;
       this.numberStr = "";
       this.txtArr = [];
@@ -758,6 +767,7 @@ export default {
       });
     },
     checkAll1() {
+      this.allnot = 1;
       this.checkedTxt = true;
       this.checkStatus = 0;
       this.numberStr = "";
@@ -1032,6 +1042,35 @@ export default {
         this.$message.error("请先选择数据！");
       }
     },
+    //结果导出
+    resultExport() {
+      this.fullscreenLoading = true;
+      let fd = new FormData();
+      // fd.append("", this.);
+      this.$http
+        .post("", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          console.log("res",res);
+
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+
+          this.fullscreenLoading = false;
+        })
+        .catch(error => {
+          console.log(error);
+          this.fullscreenLoading = false;
+        })
+    },
     changeToEntitySearch() {
       this.inputEntity1 = "";
       this.inputEntity2 = "";
@@ -1155,9 +1194,10 @@ export default {
     //模型测试
     modelTest() {
       this.fullscreenLoading = true;
-      let fd = new FormData();
-      fd.append("contents", this.fileIndex);
-      if (this.isMerge) {
+      if (this.isMerge) { //合并之后
+        let fd = new FormData();
+        fd.append("contents", this.fileIndex);
+        fd.append("ALL_NOT", this.allnot.toString());
         this.$http
           .post("http://39.102.71.123:23352/pic/textTestALL", fd, {
             headers: {
@@ -1165,6 +1205,7 @@ export default {
             },
           })
           .then((res) => {
+            this.allnot = 1;
             this.fullscreenLoading = false;
             if (this.recallSet.length === 0)
               this.recallSet.push({
@@ -1234,7 +1275,7 @@ export default {
           .catch((res) => {
             console.log(res);
           });
-      } else {
+      } else { //没有合并
         if (this.selectTitle === "") {
           this.$message({
             message: "请先查看文书！",
@@ -1244,6 +1285,8 @@ export default {
           return;
         }
 
+        let fd = new FormData();
+        fd.append("contents", this.fileIndex);
         fd.append("filename", this.selectTitle);
         this.$http
           .post("http://39.102.71.123:23352/pic/textTestDemo", fd, {
@@ -1887,7 +1930,7 @@ body > .el-container {
   color: #ffffff;
 }
 .darkBtn:hover {
-  background-color: #708bf7;
+  background-color: #108cee;
 }
 
 .tableHeader {

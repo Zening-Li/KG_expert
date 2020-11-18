@@ -188,7 +188,7 @@
     color: #FFFFFF;
   }
   .darkBtn:hover{
-    background-color: #708BF7;
+    background-color: #108cee;
   }
 
   .blueBtn{

@@ -16,6 +16,12 @@
         </div>
       </el-card>
     </div>
+    <!-- 进度条 -->
+    <el-dialog :visible.sync="showProgress" show-close="true">
+      <div>
+        <el-progress type="circle" :percentage="progressNum"></el-progress>
+      </div>
+    </el-dialog>
     <!-- 设置重合区域阈值 -->
     <el-dialog
       title="设置重合区域阈值"
@@ -26,12 +32,10 @@
       <el-input v-model="threshold" size="small"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showThreshold = false">取 消</el-button>
-        <el-button type="primary" @click="showThreshold = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="showThreshold = false">确 定</el-button>
       </span>
-
     </el-dialog>
+
     <!--内容块-->
     <el-main>
       <!--上传窗口-->
@@ -182,6 +186,13 @@
           @click="showHistory"
           v-if="!resultFlag&&!graphFlag"
         >查看历史信息</el-button>
+        <el-button
+          type="primary"
+          class="darkBtn"
+          size="small"
+          style="margin-right:20px;"
+          @click="start"
+        >开始</el-button>
       </div>
       <!--中心-->
       <!--      列表页-->
@@ -397,6 +408,9 @@ export default {
       resultFlag: false,
       curPage: 1,
       curPageResult:1,
+      //进度条
+      progressNum: 0,
+      showProgress: false,
       //表格数据 测试集
       picList: [],
       //选中行
@@ -695,6 +709,19 @@ export default {
           this.loadingRes = false;
         });histo
     },
+    //进度条
+    start() {
+      this.showProgress = true;
+      this.progressNum = 0;
+      setInterval(() => {
+        if(this.progressNum == 20) {
+          clearTimeout(timer);
+          this.showProgress = false;
+        }else {
+          var timer = setTimeout(console.log(this.progressNum++), 0);
+        }
+      }, 500);
+    },
     //查看历史信息
     showHistory() {
       if(this.fileIndex == "") {
@@ -940,7 +967,7 @@ body > .el-container {
   color: #ffffff;
 }
 .darkBtn:hover {
-  background-color: #708bf7;
+  background-color: #108cee;
 }
 
 .tableHeader {
