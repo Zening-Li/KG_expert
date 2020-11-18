@@ -16,6 +16,12 @@
         </div>
       </el-card>
     </div>
+    <!-- 进度条 -->
+    <el-dialog :visible.sync="showProgress" :show-close="showClose" :close-on-click-modal="showClose">
+      <div>
+        <el-progress type="circle" :percentage="progressNum"></el-progress>
+      </div>
+    </el-dialog>
     <!-- 设置重合区域阈值 -->
     <el-dialog
       title="设置重合区域阈值"
@@ -26,12 +32,10 @@
       <el-input v-model="threshold" size="small"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showThreshold = false">取 消</el-button>
-        <el-button type="primary" @click="showThreshold = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="showThreshold = false">确 定</el-button>
       </span>
-
     </el-dialog>
+
     <!--内容块-->
     <el-main>
       <!--上传窗口-->
@@ -147,7 +151,7 @@
           style="margin-right: 20px"
           @click="choosePic"
           v-if="!resultFlag && !graphFlag"
-        >确定</el-button>
+        >加载训练模型</el-button>
       </div>
       <div class="top-tip" style="padding: 10px 0">
         <el-button
@@ -203,17 +207,17 @@
             >
               <el-table-column prop="title" label="测试数据"></el-table-column>
               <el-table-column label="浏览" width="100" align="center">
-              <template slot-scope="scope">
-                <el-button
-                  class="blueBtn"
-                  @click="handleShow(scope.row)"
-                  type="primary"
-                  plain
-                  size="small"
-                >浏览</el-button>
-              </template>
-            </el-table-column>
-              <!-- <el-table-column label="预测" width="100" align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    class="blueBtn"
+                    @click="handleShow(scope.row)"
+                    type="primary"
+                    plain
+                    size="small"
+                  >浏览</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column label="预测" width="100" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -223,7 +227,7 @@
                     size="small"
                   >预测</el-button>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
             <!-- 分页符-->
             <el-pagination
@@ -376,19 +380,19 @@ export default {
       ],
       fileIndex: "",
       fileIndexList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5",
+        "军事图像目录1",
+        "军事图像目录2",
+        "军事图像目录3",
+        "军事图像目录4",
+        "军事图像目录5"
       ],
       picIndex: "",
       picIndexList: [
-        "图片抽取模型1",
-        "图片抽取模型2",
-        "图片抽取模型3",
-        "图片抽取模型4",
-        "图片抽取模型5",
+        "军事图像知识检测模型1",
+        "军事图像知识检测模型2",
+        "军事图像知识检测模型3",
+        "军事图像知识检测模型4",
+        "军事图像知识检测模型5"
       ],
       level: 1,
       graphFlag: false,
@@ -397,6 +401,10 @@ export default {
       resultFlag: false,
       curPage: 1,
       curPageResult:1,
+      //进度条
+      progressNum: 0,
+      showProgress: false,
+      showClose: false,
       //表格数据 测试集
       picList: [],
       //选中行
@@ -555,7 +563,17 @@ export default {
         this.$message.error("请先设置重合区域阈值！");
         return;
       }
-      this.fullscreenLoading = true;
+      //进度条
+      this.showProgress = true;
+      this.progressNum = 0;
+      setInterval(() => {
+        if(this.progressNum == 99 || this.progressNum > 99) {
+          clearTimeout(timer);
+        }else {
+          var timer = setTimeout(this.progressNum++, 0);
+        }
+      }, 100);
+
       let fd = new FormData();
       fd.append("IoU",this.threshold);
       fd.append("contents", this.fileIndex);
@@ -566,69 +584,77 @@ export default {
           }
         })
         .then(res => {
-          this.$alert(
-            "<p><strong>目标实体数量： <i>" +
-            res.data[4] +
-            "</i> 个</strong></p>" +
-            "<p><strong>抽取目标数量： <i>" +
-            res.data[3] +
-            "</i> 个</strong></p>" +
-            "<p><strong>正确抽取目标数量： <i>" +
-            res.data[2] +
-            "</i> 个</strong></p>" +
-            "<p><strong>图像检测准确率： <i>" +
-            res.data[2] +"/"+res.data[3] +"="+res.data[0] +
-            "</i> %</strong></p>" +
-            "<p><strong>图像检测召回率： <i>" +
-            res.data[2] +"/"+res.data[4] +"="+res.data[1] +
-            "</i> %</strong></p>" +
-              "<p><strong>航母目标准确率： <i>" +
-            res.data[5]+
-              "</i> %</strong></p>" +
-              "<p><strong>航母目标召回率： <i>" +
-            res.data[6]+
-              "</i> %</strong></p>" +
-              "<p><strong>驱逐舰目标准确率： <i>" +
-            res.data[7]+
-              "</i> %</strong></p>"  +
-              "<p><strong>驱逐舰目标召回率： <i>" +
-            res.data[8]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标准确率： <i>" +
-            res.data[9]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标召回率： <i>" +
-            res.data[10]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标准确率： <i>" +
-            res.data[11]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标召回率： <i>" +
-            res.data[12]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标准确率： <i>" +
-            res.data[13]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标召回率： <i>" +
-            res.data[14]+
-              "</i> %</strong></p>" +
-              "<p><strong>飞机准确率： <i>" +
-              res.data[15]+
-              "</i> %</strong></p>"  +
-              "<p><strong>飞机召回率： <i>" +
-              res.data[16]+
-              "</i> %</strong></p>",
-            "模型测试结果",
-            {
-              dangerouslyUseHTMLString: true
-            }
-          );
-          this.fullscreenLoading = false;
+          console.log(res);
+          if(res.data != []) {
+            this.progressNum = 100;
+            this.showProgress = false;
+            this.$message({
+              message: "模型测试完成！",
+              type: "success"
+            })
+          }
+          // this.$alert(
+          //   "<p><strong>目标实体数量： <i>" +
+          //   res.data[4] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>抽取目标数量： <i>" +
+          //   res.data[3] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>正确抽取目标数量： <i>" +
+          //   res.data[2] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>图像检测准确率： <i>" +
+          //   res.data[2] +"/"+res.data[3] +"="+res.data[0] +
+          //   "</i> %</strong></p>" +
+          //   "<p><strong>图像检测召回率： <i>" +
+          //   res.data[2] +"/"+res.data[4] +"="+res.data[1] +
+          //   "</i> %</strong></p>" +
+          //     "<p><strong>航母目标准确率： <i>" +
+          //   res.data[5]+
+          //     "</i> %</strong></p>" +
+          //     "<p><strong>航母目标召回率： <i>" +
+          //   res.data[6]+
+          //     "</i> %</strong></p>" +
+          //     "<p><strong>驱逐舰目标准确率： <i>" +
+          //   res.data[7]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>驱逐舰目标召回率： <i>" +
+          //   res.data[8]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>护卫舰目标准确率： <i>" +
+          //   res.data[9]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>护卫舰目标召回率： <i>" +
+          //   res.data[10]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>巡洋舰目标准确率： <i>" +
+          //   res.data[11]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>巡洋舰目标召回率： <i>" +
+          //   res.data[12]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>战列舰目标准确率： <i>" +
+          //   res.data[13]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>战列舰目标召回率： <i>" +
+          //   res.data[14]+
+          //     "</i> %</strong></p>" +
+          //     "<p><strong>飞机准确率： <i>" +
+          //     res.data[15]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>飞机召回率： <i>" +
+          //     res.data[16]+
+          //     "</i> %</strong></p>",
+          //   "模型测试结果",
+          //   {
+          //     dangerouslyUseHTMLString: true
+          //   }
+          // );
+
         })
         .catch(res => {
           console.log(res);
           alert("出错了！");
-          this.fullscreenLoading = false;
         });
     },
     //返回按钮
@@ -640,6 +666,7 @@ export default {
     //加载测试数据
     loadList() {
       this.loadingRes = true;
+      this.progressNum = 0; //进度条恢复初始值
       let fd = new FormData();
       fd.append("contents", this.fileIndex);
       this.$http
@@ -661,7 +688,7 @@ export default {
           this.loadingRes = false;
         });
     },
-    //确定
+    //加载训练模型
     choosePic() {
       this.$message({
         message: "加载模型 ‘" + this.picIndex + "’ 成功！",
@@ -940,7 +967,7 @@ body > .el-container {
   color: #ffffff;
 }
 .darkBtn:hover {
-  background-color: #708bf7;
+  background-color: #108cee;
 }
 
 .tableHeader {

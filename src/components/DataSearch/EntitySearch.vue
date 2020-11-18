@@ -532,7 +532,7 @@ body > .el-container {
   color: #ffffff;
 }
 .darkBtn:hover {
-  background-color: #708bf7;
+  background-color: #108cee;
 }
 .textBtn {
   color: #606266;

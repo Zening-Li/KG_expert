@@ -439,7 +439,7 @@
     color: #FFFFFF;
   }
   .darkBtn:hover{
-    background-color: #708BF7;
+    background-color: #108cee;
   }
   /*图片及echarts样式*/
   .resultContainer{

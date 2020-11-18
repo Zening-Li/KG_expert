@@ -23,6 +23,12 @@
         </div>
       </el-card>
     </div>
+    <!-- 进度条 -->
+    <el-dialog :visible.sync="showProgress" :show-close="showClose" :close-on-click-modal="showClose">
+      <div>
+        <el-progress type="circle" :percentage="progressNum"></el-progress>
+      </div>
+    </el-dialog>
     <!-- 设置重合区域阈值 -->
     <el-dialog
       title="设置重合区域阈值"
@@ -61,20 +67,14 @@
         <!--@click="showGraph"-->
         <!--v-if="!resultFlag&&!graphFlag"-->
         <!--&gt;加入图谱</el-button>-->
-        
-        
-        
-
-        
-        
-        
       </div>
       <el-divider></el-divider>
       <div class="top-tip" style="textAlign:left; clear:both;padding-left: 0">
         <el-select
           v-model="fileIndex"
-          placeholder="请选择"
+          placeholder="请选择测试目录"
           size="small"
+          v-if="!resultFlag && !graphFlag"
           style="margin-right: 10px;"
         >
           <el-option
@@ -96,7 +96,7 @@
           v-model="videoIndex"
           size="small"
           placeholder="请选择模型"
-          style="margin-right: 20px;"
+          style="margin-right: 10px;"
           v-if="!resultFlag && !graphFlag"
         >
           <el-option
@@ -112,7 +112,7 @@
           style="margin-right: 20px"
           v-if="!resultFlag && !graphFlag"
           @click="chooseVideo"
-        >确定</el-button>
+        >加载训练模型</el-button>
       </div>
       <div class="top-tip" style="padding: 10px 0">
         <el-button
@@ -169,7 +169,7 @@
               border
             >
               <el-table-column prop="title" label="测试数据"></el-table-column>
-              <el-table-column label="浏览" width="100" align="center">
+              <el-table-column label="浏览" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -177,11 +177,10 @@
                     type="primary"
                     plain
                     size="small"
-                    >浏览</el-button
-                  >
+                    >浏览</el-button>
                 </template>
               </el-table-column>
-              <!-- <el-table-column label="预测" width="100" align="center">
+              <el-table-column label="预测" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
                     class="blueBtn"
@@ -189,10 +188,9 @@
                     type="primary"
                     plain
                     size="small"
-                    >预测</el-button
-                  >
+                  >预测</el-button>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
             <!-- 分页符-->
             <el-pagination
@@ -351,19 +349,19 @@ export default {
       curPageResult: 1,
       fileIndex: "",
       fileIndexList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5",
+        "军事视频目录1",
+        "军事视频目录2",
+        "军事视频目录3",
+        "军事视频目录4",
+        "军事视频目录5"
       ],
       videoIndex: "",
       videoIndexList: [
-        "视频抽取模型1",
-        "视频抽取模型2",
-        "视频抽取模型3",
-        "视频抽取模型4",
-        "视频抽取模型5",
+        "军事视频知识检测模型1",
+        "军事视频知识检测模型2",
+        "军事视频知识检测模型3",
+        "军事视频知识检测模型4",
+        "军事视频知识检测模型5"
       ],
       //上传的文件列表
       fileList: [],
@@ -373,6 +371,10 @@ export default {
       choosenRow: {},
       //三元组数据
       tripleData: [],
+      //进度条
+      showProgress: false,
+      progressNum: 0,
+      showClose: false,
       //弹出框可视
       selectTitle: "文书名",
       loadingRes: false,
@@ -441,10 +443,13 @@ export default {
         });
       this.inputEntity = "";
     },
+    //查看测试结果
     showResults() {
       this.resultFlag = true;
+      let fd = new FormData();
+      fd.append("contents",this.fileIndex);
       this.$http
-        .post("http://39.102.71.123:23352/pic/video_test_results", {
+        .post("http://39.102.71.123:23352/pic/video_test_results_1", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -466,15 +471,27 @@ export default {
           alert("出错了！");
         });
     },
-
+    //模型测试
     modelTest() {
       if(this.threshold===""){
         this.$message.error("请先设置重合区域阈值！");
         return;
       }
-      this.fullscreenLoading = true;
+      
+      //进度条
+      this.showProgress = true;
+      this.progressNum = 0;
+      setInterval(() => {
+        if(this.progressNum == 99 || this.progressNum > 99) {
+          clearTimeout(timer);
+        }else {
+          var timer = setTimeout(this.progressNum++, 0);
+        }
+      }, 100);
+
       let fd = new FormData();
       fd.append("IoU",this.threshold);
+      fd.append("contents",this.fileIndex);
       this.$http
         .post("http://39.102.71.123:23352/pic/video_test", fd, {
           headers: {
@@ -482,69 +499,76 @@ export default {
           }
         })
         .then(res => {
-          this.$alert(
-            "<p><strong>目标实体数量： <i>" +
-            res.data[4] +
-            "</i> 个</strong></p>" +
-            "<p><strong>抽取目标数量： <i>" +
-            res.data[3] +
-            "</i> 个</strong></p>" +
-            "<p><strong>正确抽取目标数量： <i>" +
-            res.data[2] +
-            "</i> 个</strong></p>" +
-            "<p><strong>图像检测准确率： <i>" +
-            res.data[2] +"/"+res.data[3] +"="+res.data[0] +
-            "</i> %</strong></p>" +
-            "<p><strong>图像检测召回率： <i>" +
-            res.data[2] +"/"+res.data[4] +"="+res.data[1] +
-            "</i> %</strong></p>" +
-            "<p><strong>航母目标准确率： <i>" +
-            res.data[5]+
-            "</i> %</strong></p>" +
-            "<p><strong>航母目标召回率： <i>" +
-            res.data[6]+
-            "</i> %</strong></p>" +
-            "<p><strong>驱逐舰目标准确率： <i>" +
-            res.data[7]+
-            "</i> %</strong></p>"  +
-            "<p><strong>驱逐舰目标召回率： <i>" +
-            res.data[8]+
-            "</i> %</strong></p>"  +
-            "<p><strong>护卫舰目标准确率： <i>" +
-            res.data[9]+
-            "</i> %</strong></p>"  +
-            "<p><strong>护卫舰目标召回率： <i>" +
-            res.data[10]+
-            "</i> %</strong></p>"  +
-            "<p><strong>巡洋舰目标准确率： <i>" +
-            res.data[11]+
-            "</i> %</strong></p>"  +
-            "<p><strong>巡洋舰目标召回率： <i>" +
-            res.data[12]+
-            "</i> %</strong></p>"  +
-            "<p><strong>战列舰目标准确率： <i>" +
-            res.data[13]+
-            "</i> %</strong></p>"  +
-            "<p><strong>战列舰目标召回率： <i>" +
-            res.data[14]+
-            "</i> %</strong></p>" ,
-            "模型测试结果",
-            {
-              dangerouslyUseHTMLString: true
-            }
-          );
-          this.fullscreenLoading = false;
+          console.log(res);
+          if(res.data != []) {
+            this.progressNum = 100;
+            this.showProgress = false;
+            this.$message({
+              message: "模型测试完成！",
+              type: "success"
+            })
+          }
+          // this.$alert(
+          //   "<p><strong>目标实体数量： <i>" +
+          //   res.data[4] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>抽取目标数量： <i>" +
+          //   res.data[3] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>正确抽取目标数量： <i>" +
+          //   res.data[2] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>图像检测准确率： <i>" +
+          //   res.data[2] +"/"+res.data[3] +"="+res.data[0] +
+          //   "</i> %</strong></p>" +
+          //   "<p><strong>图像检测召回率： <i>" +
+          //   res.data[2] +"/"+res.data[4] +"="+res.data[1] +
+          //   "</i> %</strong></p>" +
+          //   "<p><strong>航母目标准确率： <i>" +
+          //   res.data[5]+
+          //   "</i> %</strong></p>" +
+          //   "<p><strong>航母目标召回率： <i>" +
+          //   res.data[6]+
+          //   "</i> %</strong></p>" +
+          //   "<p><strong>驱逐舰目标准确率： <i>" +
+          //   res.data[7]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>驱逐舰目标召回率： <i>" +
+          //   res.data[8]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>护卫舰目标准确率： <i>" +
+          //   res.data[9]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>护卫舰目标召回率： <i>" +
+          //   res.data[10]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>巡洋舰目标准确率： <i>" +
+          //   res.data[11]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>巡洋舰目标召回率： <i>" +
+          //   res.data[12]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>战列舰目标准确率： <i>" +
+          //   res.data[13]+
+          //   "</i> %</strong></p>"  +
+          //   "<p><strong>战列舰目标召回率： <i>" +
+          //   res.data[14]+
+          //   "</i> %</strong></p>" ,
+          //   "模型测试结果",
+          //   {
+          //     dangerouslyUseHTMLString: true
+          //   }
+          // );
         })
         .catch(res => {
           console.log(res);
           alert("出错了！");
-          this.fullscreenLoading = false;
         });
     },
     //加载测试数据
     loadList() {
-      console.log(this.fileIndex);
       this.loadingRes = true;
+      
       let fd = new FormData();
       fd.append("contents", this.fileIndex);
       this.$http
@@ -566,7 +590,7 @@ export default {
           this.loadingRes = false;
         });
     },
-    //确定
+    //加载训练模型
     chooseVideo() {
       this.$message({
         message: "加载模型 ‘" + this.videoIndex + "’ 成功！",
@@ -579,11 +603,12 @@ export default {
     handleCurrentChangeResult(cpage) {
       this.curPageResult = cpage;
     },
-    //查看视频内容
+    //查看视频内容 浏览
     handleShow(row) {
       this.selectTitle = row.title;
       let fd = new FormData();
       fd.append("filename", row.title);
+      fd.append("contents",this.fileIndex)
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/view_videoData", fd, {
@@ -697,8 +722,24 @@ export default {
           console.log(res);
         });
     },
+    //浏览
     handleAnalysisResult(row) {
-      this.resultSrc = row;
+      let fd = new FormData();
+      fd.append("contents", this.fileIndex);
+      fd.append("filename", row);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/video_test_results_2", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(res => {
+          console.log("res",res);
+          this.resultSrc = res.data;
+        })
+        .catch(error => {
+          console.log(error);
+        })
     },
   },
 };
@@ -843,7 +884,7 @@ body > .el-container {
   color: #ffffff;
 }
 .darkBtn:hover {
-  background-color: #708bf7;
+  background-color: #108cee;
 }
 
 .tableHeader {

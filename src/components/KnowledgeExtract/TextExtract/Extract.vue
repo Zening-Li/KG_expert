@@ -188,7 +188,7 @@
             class="darkBtn"
             size="small"
             style="float: right; margin-right: 8px"
-            v-if="showFlag === 1"
+            v-if="showFlag === 1 && !isMerge"
             @click="textExtract"
           >文本知识抽取</el-button>
           <el-button
@@ -199,14 +199,14 @@
             v-if="showFlag === 1"
             @click="showTestResult"
           >查看测试结果</el-button>
-          <el-button
+          <!-- <el-button
             class="darkBtn"
             size="small"
             style="float: right; margin-right: 8px"
             @click="calculateAverage"
             v-if="showFlag === 1 && isMerge"
             :disabled="calculateDis"
-          >计算平均结果</el-button>
+          >计算平均结果</el-button> -->
           <el-button
             class="darkBtn"
             size="small"
@@ -215,13 +215,12 @@
             v-if="showFlag === 1 && !isMerge"
           >合并</el-button>
           <el-button
-            type="primary"
             class="darkBtn"
             size="small"
-            style="float: right; margin-right: 8px"
-            @click="modelTest"
-            v-if="showFlag === 1"
-          >模型测试</el-button>
+            style="float: right;margin-right: 8px;"
+            v-if="showFlag === 1 && isMerge"
+            @click="resultExport"
+          >结果导出</el-button>
           <el-button
             class="darkBtn"
             size="small"
@@ -230,6 +229,14 @@
             :disabled="checkDis"
             v-if="showFlag === 1"
           >全选</el-button>
+          <el-button
+            type="primary"
+            class="darkBtn"
+            size="small"
+            style="float: right; margin-right: 8px"
+            @click="modelTest"
+            v-if="showFlag === 1"
+          >模型测试</el-button>
         </el-row>
         <div id="matchInfo" v-if="testData.length !== 0 && showTable == 1">
           <div>
@@ -355,7 +362,7 @@
               <span v-if="textData === '' && !isMerge">(选择文件以浏览内容)</span>
               <span v-if="textData === '' && isMerge">(正在加载合并文件)</span>
             </div>
-            <div style="padding: 0 15px;width:100%">
+            <div style="padding: 0 15px;width:96%;height: 100%">
               <pre
                 
                 style="
@@ -567,7 +574,7 @@ export default {
       showTable : 1,
       numberArr: [],
       numberStr: "",
-      allnot: 0,
+      allnot: 1, //多选0，全选1
       //弹框
       outerVisible: false,
       innerVisible: false,
@@ -601,11 +608,11 @@ export default {
       curPage: 1,
       fileIndex: "",
       fileList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5",
+        "军事文本目录1",
+        "军事文本目录2",
+        "军事文本目录3",
+        "军事文本目录4",
+        "军事文本目录5"
       ],
       uploadFileList: [],
       //表格数据 测试集
@@ -655,7 +662,13 @@ export default {
       isMerge: false,
       //模型列表
       modelIndex: "",
-      modelList: ["实体抽取模型1", "实体抽取模型2", "实体抽取模型3", "实体抽取模型4", "实体抽取模型5"],
+      modelList: [
+        "军事文本知识抽取模型1",
+        "军事文本知识抽取模型2",
+        "军事文本知识抽取模型3",
+        "军事文本知识抽取模型4",
+        "军事文本知识抽取模型5",
+      ],
       //图谱
       graphWidth: "100%",
       graphHeight: "100%",
@@ -719,7 +732,9 @@ export default {
     },
     //多选
     handleSelectionChange(val) {
+      console.log(0);
       this.checkStatus = 1;
+      this.allnot = 0;
       if(this.checkDis == false) {
         this.checkedTxt = false;
         this.multipleSelection = val;
@@ -748,6 +763,7 @@ export default {
     },
     //全选
     checkAll() {
+      this.allnot = 1;
       this.checkedTxt = true;
       this.numberStr = "";
       this.txtArr = [];
@@ -758,6 +774,7 @@ export default {
       });
     },
     checkAll1() {
+      this.allnot = 1;
       this.checkedTxt = true;
       this.checkStatus = 0;
       this.numberStr = "";
@@ -1032,6 +1049,36 @@ export default {
         this.$message.error("请先选择数据！");
       }
     },
+    //结果导出
+    resultExport() {
+      this.fullscreenLoading = true;
+      let fd = new FormData();
+      fd.append("contents", this.fileIndex);
+      fd.append("ALL_NOT", this.allnot.toString());
+      this.$http
+        .post("http://39.102.71.123:23352/pic/export_text_test_results", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          console.log("res",res);
+
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+
+          this.fullscreenLoading = false;
+        })
+        .catch(error => {
+          console.log(error);
+          this.fullscreenLoading = false;
+        })
+    },
     changeToEntitySearch() {
       this.inputEntity1 = "";
       this.inputEntity2 = "";
@@ -1155,9 +1202,10 @@ export default {
     //模型测试
     modelTest() {
       this.fullscreenLoading = true;
-      let fd = new FormData();
-      fd.append("contents", this.fileIndex);
-      if (this.isMerge) {
+      if (this.isMerge) { //合并之后
+        let fd = new FormData();
+        fd.append("contents", this.fileIndex);
+        fd.append("ALL_NOT", this.allnot.toString());
         this.$http
           .post("http://39.102.71.123:23352/pic/textTestALL", fd, {
             headers: {
@@ -1202,29 +1250,30 @@ export default {
             }
 
             this.$alert(
-              "<p><strong>实际实体数量： <i>" +
-                res.data[4] +
-                "</i> 个</strong></p>" +
-                "<p><strong>抽取实体数量： <i>" +
-                res.data[3] +
-                "</i> 个</strong></p>" +
-                "<p><strong>正确抽取实体数量： <i>" +
-                res.data[2] +
-                "</i> 个</strong></p>" +
-                "<p><strong>实体抽取准确率： <i>" +
-                res.data[2] +
-                "/" +
-                res.data[3] +
-                "=" +
-                res.data[0] +
-                "</i> %</strong></p>" +
-                "<p><strong>实体抽取召回率： <i>" +
-                res.data[2] +
-                "/" +
-                res.data[4] +
-                "=" +
-                res.data[1] +
-                "</i> %</strong></p>",
+              // "<p><strong>实际实体数量： <i>" +
+              //   res.data[4] +
+              //   "</i> 个</strong></p>" +
+              //   "<p><strong>抽取实体数量： <i>" +
+              //   res.data[3] +
+              //   "</i> 个</strong></p>" +
+              //   "<p><strong>正确抽取实体数量： <i>" +
+              //   res.data[2] +
+              //   "</i> 个</strong></p>" +
+              //   "<p><strong>实体抽取准确率： <i>" +
+              //   res.data[2] +
+              //   "/" +
+              //   res.data[3] +
+              //   "=" +
+              //   res.data[0] +
+              //   "</i> %</strong></p>" +
+              //   "<p><strong>实体抽取召回率： <i>" +
+              //   res.data[2] +
+              //   "/" +
+              //   res.data[4] +
+              //   "=" +
+              //   res.data[1] +
+              //   "</i> %</strong></p>",
+              "finish!",
               this.algorithm + "合并测试结果",
               {
                 dangerouslyUseHTMLString: true,
@@ -1234,7 +1283,7 @@ export default {
           .catch((res) => {
             console.log(res);
           });
-      } else {
+      } else { //没有合并
         if (this.selectTitle === "") {
           this.$message({
             message: "请先查看文书！",
@@ -1244,6 +1293,8 @@ export default {
           return;
         }
 
+        let fd = new FormData();
+        fd.append("contents", this.fileIndex);
         fd.append("filename", this.selectTitle);
         this.$http
           .post("http://39.102.71.123:23352/pic/textTestDemo", fd, {
@@ -1409,7 +1460,7 @@ export default {
         .then((res) => {
           console.log(res);
           this.$message({
-            message: "加载模型" + this.modelIndex + "成功！",
+            message: "加载模型 ‘" + this.modelIndex + "’ 成功！",
             type: "success",
           });
         })
@@ -1887,7 +1938,7 @@ body > .el-container {
   color: #ffffff;
 }
 .darkBtn:hover {
-  background-color: #708bf7;
+  background-color: #108cee;
 }
 
 .tableHeader {

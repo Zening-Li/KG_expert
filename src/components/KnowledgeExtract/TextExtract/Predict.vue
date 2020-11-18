@@ -218,11 +218,11 @@
         //模型列表
         modelIndex: "",
         modelList: [
-          "实体抽取模型1", 
-          "实体抽取模型2", 
-          "实体抽取模型3", 
-          "实体抽取模型4", 
-          "实体抽取模型5"
+          "军事文本知识抽取模型1", 
+          "军事文本知识抽取模型2", 
+          "军事文本知识抽取模型3", 
+          "军事文本知识抽取模型4", 
+          "军事文本知识抽取模型5"
         ],
         //图谱
         graphWidth:"100%",
@@ -605,7 +605,7 @@
     color: #ffffff;
   }
   .darkBtn:hover {
-    background-color: #708bf7;
+    background-color: #108cee;
   }
 
   .tableHeader {
