@@ -17,7 +17,7 @@
       </el-card>
     </div>
     <!-- 进度条 -->
-    <el-dialog :visible.sync="showProgress" show-close="true">
+    <el-dialog :visible.sync="showProgress" :show-close="showClose" :close-on-click-modal="showClose">
       <div>
         <el-progress type="circle" :percentage="progressNum"></el-progress>
       </div>
@@ -186,13 +186,6 @@
           @click="showHistory"
           v-if="!resultFlag&&!graphFlag"
         >查看历史信息</el-button>
-        <el-button
-          type="primary"
-          class="darkBtn"
-          size="small"
-          style="margin-right:20px;"
-          @click="start"
-        >开始</el-button>
       </div>
       <!--中心-->
       <!--      列表页-->
@@ -411,6 +404,7 @@ export default {
       //进度条
       progressNum: 0,
       showProgress: false,
+      showClose: false,
       //表格数据 测试集
       picList: [],
       //选中行
@@ -569,7 +563,17 @@ export default {
         this.$message.error("请先设置重合区域阈值！");
         return;
       }
-      this.fullscreenLoading = true;
+      //进度条
+      this.showProgress = true;
+      this.progressNum = 0;
+      setInterval(() => {
+        if(this.progressNum == 99 || this.progressNum > 99) {
+          clearTimeout(timer);
+        }else {
+          var timer = setTimeout(this.progressNum++, 0);
+        }
+      }, 100);
+      
       let fd = new FormData();
       fd.append("IoU",this.threshold);
       fd.append("contents", this.fileIndex);
@@ -580,69 +584,77 @@ export default {
           }
         })
         .then(res => {
-          this.$alert(
-            "<p><strong>目标实体数量： <i>" +
-            res.data[4] +
-            "</i> 个</strong></p>" +
-            "<p><strong>抽取目标数量： <i>" +
-            res.data[3] +
-            "</i> 个</strong></p>" +
-            "<p><strong>正确抽取目标数量： <i>" +
-            res.data[2] +
-            "</i> 个</strong></p>" +
-            "<p><strong>图像检测准确率： <i>" +
-            res.data[2] +"/"+res.data[3] +"="+res.data[0] +
-            "</i> %</strong></p>" +
-            "<p><strong>图像检测召回率： <i>" +
-            res.data[2] +"/"+res.data[4] +"="+res.data[1] +
-            "</i> %</strong></p>" +
-              "<p><strong>航母目标准确率： <i>" +
-            res.data[5]+
-              "</i> %</strong></p>" +
-              "<p><strong>航母目标召回率： <i>" +
-            res.data[6]+
-              "</i> %</strong></p>" +
-              "<p><strong>驱逐舰目标准确率： <i>" +
-            res.data[7]+
-              "</i> %</strong></p>"  +
-              "<p><strong>驱逐舰目标召回率： <i>" +
-            res.data[8]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标准确率： <i>" +
-            res.data[9]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标召回率： <i>" +
-            res.data[10]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标准确率： <i>" +
-            res.data[11]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标召回率： <i>" +
-            res.data[12]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标准确率： <i>" +
-            res.data[13]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标召回率： <i>" +
-            res.data[14]+
-              "</i> %</strong></p>" +
-              "<p><strong>飞机准确率： <i>" +
-              res.data[15]+
-              "</i> %</strong></p>"  +
-              "<p><strong>飞机召回率： <i>" +
-              res.data[16]+
-              "</i> %</strong></p>",
-            "模型测试结果",
-            {
-              dangerouslyUseHTMLString: true
-            }
-          );
-          this.fullscreenLoading = false;
+          console.log(res);
+          if(res.data != []) {
+            this.progressNum = 100;
+            this.showProgress = false;
+            this.$message({
+              message: "模型测试完成！",
+              type: "success"
+            })
+          }
+          // this.$alert(
+          //   "<p><strong>目标实体数量： <i>" +
+          //   res.data[4] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>抽取目标数量： <i>" +
+          //   res.data[3] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>正确抽取目标数量： <i>" +
+          //   res.data[2] +
+          //   "</i> 个</strong></p>" +
+          //   "<p><strong>图像检测准确率： <i>" +
+          //   res.data[2] +"/"+res.data[3] +"="+res.data[0] +
+          //   "</i> %</strong></p>" +
+          //   "<p><strong>图像检测召回率： <i>" +
+          //   res.data[2] +"/"+res.data[4] +"="+res.data[1] +
+          //   "</i> %</strong></p>" +
+          //     "<p><strong>航母目标准确率： <i>" +
+          //   res.data[5]+
+          //     "</i> %</strong></p>" +
+          //     "<p><strong>航母目标召回率： <i>" +
+          //   res.data[6]+
+          //     "</i> %</strong></p>" +
+          //     "<p><strong>驱逐舰目标准确率： <i>" +
+          //   res.data[7]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>驱逐舰目标召回率： <i>" +
+          //   res.data[8]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>护卫舰目标准确率： <i>" +
+          //   res.data[9]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>护卫舰目标召回率： <i>" +
+          //   res.data[10]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>巡洋舰目标准确率： <i>" +
+          //   res.data[11]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>巡洋舰目标召回率： <i>" +
+          //   res.data[12]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>战列舰目标准确率： <i>" +
+          //   res.data[13]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>战列舰目标召回率： <i>" +
+          //   res.data[14]+
+          //     "</i> %</strong></p>" +
+          //     "<p><strong>飞机准确率： <i>" +
+          //     res.data[15]+
+          //     "</i> %</strong></p>"  +
+          //     "<p><strong>飞机召回率： <i>" +
+          //     res.data[16]+
+          //     "</i> %</strong></p>",
+          //   "模型测试结果",
+          //   {
+          //     dangerouslyUseHTMLString: true
+          //   }
+          // );
+
         })
         .catch(res => {
           console.log(res);
           alert("出错了！");
-          this.fullscreenLoading = false;
         });
     },
     //返回按钮
@@ -654,6 +666,7 @@ export default {
     //加载测试数据
     loadList() {
       this.loadingRes = true;
+      this.progressNum = 0; //进度条恢复初始值
       let fd = new FormData();
       fd.append("contents", this.fileIndex);
       this.$http
@@ -708,19 +721,6 @@ export default {
           console.log(res);
           this.loadingRes = false;
         });histo
-    },
-    //进度条
-    start() {
-      this.showProgress = true;
-      this.progressNum = 0;
-      setInterval(() => {
-        if(this.progressNum == 20) {
-          clearTimeout(timer);
-          this.showProgress = false;
-        }else {
-          var timer = setTimeout(console.log(this.progressNum++), 0);
-        }
-      }, 500);
     },
     //查看历史信息
     showHistory() {
