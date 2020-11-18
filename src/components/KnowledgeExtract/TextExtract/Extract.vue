@@ -362,7 +362,7 @@
               <span v-if="textData === '' && !isMerge">(选择文件以浏览内容)</span>
               <span v-if="textData === '' && isMerge">(正在加载合并文件)</span>
             </div>
-            <div style="padding: 0 15px;width:100%">
+            <div style="padding: 0 15px;width:96%;height: 100%">
               <pre
                 
                 style="
@@ -608,11 +608,11 @@ export default {
       curPage: 1,
       fileIndex: "",
       fileList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5",
+        "军事文本目录1",
+        "军事文本目录2",
+        "军事文本目录3",
+        "军事文本目录4",
+        "军事文本目录5"
       ],
       uploadFileList: [],
       //表格数据 测试集
@@ -662,7 +662,13 @@ export default {
       isMerge: false,
       //模型列表
       modelIndex: "",
-      modelList: ["实体抽取模型1", "实体抽取模型2", "实体抽取模型3", "实体抽取模型4", "实体抽取模型5"],
+      modelList: [
+        "军事文本知识抽取模型1",
+        "军事文本知识抽取模型2",
+        "军事文本知识抽取模型3",
+        "军事文本知识抽取模型4",
+        "军事文本知识抽取模型5",
+      ],
       //图谱
       graphWidth: "100%",
       graphHeight: "100%",
@@ -1452,7 +1458,7 @@ export default {
         .then((res) => {
           console.log(res);
           this.$message({
-            message: "加载模型" + this.modelIndex + "成功！",
+            message: "加载模型 ‘" + this.modelIndex + "’ 成功！",
             type: "success",
           });
         })

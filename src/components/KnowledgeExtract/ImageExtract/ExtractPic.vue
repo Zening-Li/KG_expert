@@ -151,7 +151,7 @@
           style="margin-right: 20px"
           @click="choosePic"
           v-if="!resultFlag && !graphFlag"
-        >确定</el-button>
+        >加载训练模型</el-button>
       </div>
       <div class="top-tip" style="padding: 10px 0">
         <el-button
@@ -380,19 +380,19 @@ export default {
       ],
       fileIndex: "",
       fileIndexList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5",
+        "军事图像目录1",
+        "军事图像目录2",
+        "军事图像目录3",
+        "军事图像目录4",
+        "军事图像目录5"
       ],
       picIndex: "",
       picIndexList: [
-        "图片抽取模型1",
-        "图片抽取模型2",
-        "图片抽取模型3",
-        "图片抽取模型4",
-        "图片抽取模型5",
+        "军事图像知识检测模型1",
+        "军事图像知识检测模型2",
+        "军事图像知识检测模型3",
+        "军事图像知识检测模型4",
+        "军事图像知识检测模型5"
       ],
       level: 1,
       graphFlag: false,
@@ -573,7 +573,7 @@ export default {
           var timer = setTimeout(this.progressNum++, 0);
         }
       }, 100);
-      
+
       let fd = new FormData();
       fd.append("IoU",this.threshold);
       fd.append("contents", this.fileIndex);
@@ -688,7 +688,7 @@ export default {
           this.loadingRes = false;
         });
     },
-    //确定
+    //加载训练模型
     choosePic() {
       this.$message({
         message: "加载模型 ‘" + this.picIndex + "’ 成功！",

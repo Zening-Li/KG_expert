@@ -21,6 +21,7 @@
           <el-button
             class="blueBtn"
             @click="chooseTestData"
+            style="margin-left: 10px"
             type="primary"
             plain
             size="small"
@@ -141,11 +142,11 @@ export default {
       loadingRes: false,
       testIndex: "",
       TestList: [
-        "contents1",
-        "contents2",
-        "contents3",
-        "contents4",
-        "contents5"
+        "武器装备性能库1",
+        "武器装备性能库2",
+        "武器装备性能库3",
+        "武器装备性能库4",
+        "武器装备性能库5"
       ],
       curPage: 1,
       fileType: false, //true的时候显示映射文件，否则显示测试文件
