@@ -284,6 +284,7 @@ export default {
     };
   },
   methods: {
+    //时间
     goToExtract(){
       this.$router.push({
         path: "extract",

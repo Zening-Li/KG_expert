@@ -130,7 +130,6 @@
             @click="showGraph"
           >图谱展示</el-button> -->
 
-
           <el-button
             size="small"
             class="darkBtn"
@@ -158,7 +157,28 @@
             style="float:right;margin-right:20px"
             @click="checkAll"
             v-if="showFlag === 2"
-          >全选</el-button>
+          >全选1</el-button>
+          <el-select
+            v-model="modelIndexNew"
+            v-if="showFlag === 2"
+            placeholder="请选择"
+            size="small"
+            style="float:left;"
+          >
+            <el-option
+              v-for="(item, index) in modelListNew"
+              :key="index"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
+          <el-button
+            style="margin-left: 20px;float:left;"
+            class="blueBtn"
+            size="small"
+            @click="chooseTableNew"
+            v-if="showFlag === 2"
+          >加载测试数据</el-button>
         </el-row>
         <el-row class="top-tip" v-if="showTable == 1">
           <span style="margin-left: 0px" v-if="showFlag === 1">请选择训练模型：</span>
@@ -276,7 +296,7 @@
                     type="primary"
                     plain
                     size="small"
-                  >浏览</el-button>
+                  >浏览1</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -299,7 +319,7 @@
                     type="primary"
                     plain
                     size="small"
-                  >浏览</el-button>
+                  >浏览2</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -502,59 +522,79 @@
     </el-main>
 
     <!-- 弹框 -->
-    <el-dialog title="实体属性抽取结果" :visible.sync="outerVisible" style="width:60%; margin-left:20%">
+    <el-dialog title="finish!" :visible.sync="outerVisible" style="width:65%; margin-left:20%;margin-top:10%;">
       <p style="width:100%;fontSize:15px;margin:-10px 0;textAlign:left;">
-        <strong>
+        <!-- <strong>
           总耗时：<i>{{this.resDataArr[0]}}</i>秒<br />
           实体属性抽取数量：<i>{{this.resDataArr[1]}}</i>条<br />
           实体属性抽取效率：<i>{{this.resDataArr[2]}}</i>条/秒<br />
-        </strong>
+        </strong> -->
+        <span>实体属性抽取完成!</span>
       </p>
       <el-dialog
         width="40%"
-        title="实体属性抽取结果（部分）"
+        title="实体属性抽取结果"
         :visible.sync="innerVisible"
         append-to-body>
         <el-table
           :show-header="false"
-          :data="innerDiaArr"
+          :data="innerDiaArr.slice((curPageTrain1 - 1) * 10, curPageTrain1 * 10)"
           style="width:100%;">
           <el-table-column prop="entity1"></el-table-column>
           <el-table-column prop="rel"></el-table-column>
           <el-table-column prop="entity2"></el-table-column>
         </el-table>
+        <el-pagination
+          small
+          background
+          layout="total, prev, pager, next, jumper"
+          :total="fileCountTest1"
+          :current-page.sync="curPageTrain1"
+          @current-change="handleCurrentChangeTrainInner">
+        </el-pagination>
       </el-dialog>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="outerVisible = false">确 定</el-button>
-        <el-button type="primary" @click="openInner">查看抽取结果</el-button>
+        <el-button size="small" @click="outerVisible = false">确 定</el-button>
+        <el-button class="darkBtn" size="small" type="primary" @click="openInner">查看抽取结果</el-button>
+        <el-button class="darkBtn" size="small" type="primary" @click="innerResultExport">结果导出</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog title="实体关系抽取结果" :visible.sync="outerVisible1" style="width:60%; margin-left:20%">
+    <el-dialog title="finish!" :visible.sync="outerVisible1" style="width:60%; margin-left:20%;margin-top:5%;">
       <p style="width:100%;fontSize:15px;margin:-10px 0;textAlign:left;">
-        <strong>
+        <!-- <strong>
           总耗时：<i>{{this.resDataArr1[0]}}</i>秒<br />
           实体属性抽取数量：<i>{{this.resDataArr1[1]}}</i>条<br />
           实体属性抽取效率：<i>{{this.resDataArr1[2]}}</i>条/秒<br />
-        </strong>
+        </strong> -->
+        <span>实体关系抽取完成!</span>
       </p>
       <el-dialog
         width="40%"
-        title="实体关系抽取结果（部分）"
+        title="实体关系抽取结果"
         :visible.sync="innerVisible1"
         append-to-body>
         <el-table
           :show-header="false"
-          :data="innerDiaArr1"
+          :data="innerDiaArr1.slice((curPageTrain1 - 1) * 10, curPageTrain1 * 10)"
           style="width:100%;">
           <el-table-column prop="entity1"></el-table-column>
           <el-table-column prop="rel"></el-table-column>
           <el-table-column prop="entity2"></el-table-column>
         </el-table>
+        <el-pagination
+          small
+          background
+          layout="total, prev, pager, next, jumper"
+          :total="fileCountTest1"
+          :current-page.sync="curPageTrain1"
+          @current-change="handleCurrentChangeTrainInner">
+        </el-pagination>
       </el-dialog>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="outerVisible1 = false">确 定</el-button>
-        <el-button type="primary" @click="openInner1">查看抽取结果</el-button>
+        <el-button size="small" @click="outerVisible1 = false">确 定</el-button>
+        <el-button class="darkBtn" size="small" type="primary" @click="openInner1">查看抽取结果</el-button>
+        <el-button class="darkBtn" size="small" type="primary" @click="inner1ResultExport">结果导出</el-button>
       </div>
     </el-dialog>
 
@@ -575,6 +615,7 @@ export default {
       numberArr: [],
       numberStr: "",
       allnot: 1, //多选0，全选1
+      entityProperty: true,
       //弹框
       outerVisible: false,
       innerVisible: false,
@@ -629,8 +670,10 @@ export default {
       diaVisible: false,
       selectTitle: "",
       fileCountTest: 0, //total
+      fileCountTest1: 0, 
       curPageTest: 1,
       curPageTrain: 1,
+      curPageTrain1: 1,
       fileCountTrain: 0,
       loadingRes: false,
       textData: "",
@@ -669,6 +712,19 @@ export default {
         "军事文本知识抽取模型4",
         "军事文本知识抽取模型5",
       ],
+      modelIndexNew: "",
+      modelListNew: [
+        "军事文本目录1",
+        "军事文本目录2",
+        "军事文本目录3",
+        "军事文本目录4",
+        "军事文本目录5",
+        "军事文本目录6",
+        "军事文本目录7",
+        "军事文本目录8",
+        "军事文本目录9",
+        "军事文本目录10"
+      ],
       //图谱
       graphWidth: "100%",
       graphHeight: "100%",
@@ -684,7 +740,7 @@ export default {
       if(this.$route.query.algorithm) {
         this.showFlag = parseInt(this.$route.query.algorithm);
         if(this.showFlag===2) {
-          this.loadAlgorithm();
+          // this.loadAlgorithm();
           this.algorithm = "正则表达式";
         }
         else
@@ -698,7 +754,7 @@ export default {
     if(this.$route.query.algorithm) {
       this.showFlag = parseInt(this.$route.query.algorithm);
       if(this.showFlag===2) {
-        this.loadAlgorithm();
+        // this.loadAlgorithm();
         this.algorithm = "正则表达式";
       }
       else
@@ -732,7 +788,6 @@ export default {
     },
     //多选
     handleSelectionChange(val) {
-      console.log(0);
       this.checkStatus = 1;
       this.allnot = 0;
       if(this.checkDis == false) {
@@ -901,8 +956,11 @@ export default {
         this.fullscreenLoading = false;
         this.$message.error('请先选择测试文件！');
       }else {
+        this.entityProperty = false;
         let fd = new FormData();
         fd.append("filename", this.numberStr);
+        fd.append("contents", this.modelIndexNew);
+        fd.append("ALL_NOT", this.allnot.toString());
         this.$http
           .post("http://39.102.71.123:23352/pic/text_relation_speed", fd,{
             headers: {
@@ -914,11 +972,10 @@ export default {
             this.fullscreenLoading = false;
             this.resDataArr1 = res.data;
             this.outerVisible1 = true;
-            this.numberStr = "";
             this.txtArr = [];
-            this.$nextTick(() => {
-              this.$refs.txt.innerText = this.numberStr;
-            })
+            // this.$nextTick(() => {
+            //   this.$refs.txt.innerText = this.numberStr;
+            // })
             // this.$alert(
             //   "<p><strong>总耗时： <i>" +
             //     res.data[0] +
@@ -950,8 +1007,11 @@ export default {
           type: "warning"
         })
       }else if(this.numberStr != "") {
+        this.entityProperty = true;
         let fd = new FormData();
         fd.append("filename", this.numberStr);
+        fd.append("contents", this.modelIndexNew);
+        fd.append("ALL_NOT", this.allnot.toString());
         this.$http
           .post("http://39.102.71.123:23352/pic/text_attribute_speed", fd,{
             headers: {
@@ -963,6 +1023,9 @@ export default {
             this.fullscreenLoading = false;
             this.resDataArr = res.data;
             this.outerVisible = true;
+            // this.$alert("实体属性抽取结果！","finish!",{
+            //   dangerouslyUseHTMLString: true,
+            // })
             // this.$alert(
             //   "<p><strong>总耗时： <i>" +
             //     res.data[0] +
@@ -985,34 +1048,105 @@ export default {
 
       }
     },
+    //查看抽取结果  实体属性
     openInner() {
       this.innerVisible = true;
+      let fd = new FormData();
+      fd.append("contents", this.modelIndexNew);
+      fd.append("ALL_NOT", this.allnot.toString());
       this.$http
-        .post("http://39.102.71.123:23352/pic/text_attribute_speed_res",{
+        .post("http://39.102.71.123:23352/pic/text_attribute_speed_res", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }).then((res) => {
-          this.innerDiaArr = res.data.map(cur => {
+        })
+        .then((res) => {
+          let arr = res.data;
+          console.log("arr111",arr);
+          this.innerDiaArr = arr.map(cur => {
             return {entity1: cur[0],rel:cur[1],entity2:cur[2]};
-          });
-        }).catch((res) => {
+          })
+          this.fileCountTest1 = arr.length;
+        })
+        .catch((res) => {
           console.log(res);
         })
     },
+    //实体属性 结果导出
+    innerResultExport() {
+      let fd = new FormData();
+      fd.append("filename", this.numberStr);
+      fd.append("contents", this.modelIndexNew);
+      fd.append("ALL_NOT", this.allnot.toString());
+      this.$http
+        .post("http://39.102.71.123:23352/pic/export_text_testSpeedAttribute_results", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          console.log("res",res);
+
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    },
+    //查看抽取结果 实体关系
     openInner1() {
       this.innerVisible1 = true;
+      let fd = new FormData();
+      fd.append("contents", this.modelIndexNew);
+      fd.append("ALL_NOT", this.allnot.toString());
       this.$http
-        .post("http://39.102.71.123:23352/pic/text_relation_speed_res",{
+        .post("http://39.102.71.123:23352/pic/text_relation_speed_res", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }).then((res) => {
-          this.innerDiaArr1 = res.data.map(cur => {
+        })
+        .then((res) => {
+          let arr = res.data;
+          this.innerDiaArr1 = arr.map(cur => {
             return {entity1: cur[0],rel:cur[1],entity2:cur[2]};
           });
-        }).catch((res) => {
+          this.fileCountTest1 = arr.length;
+        })
+        .catch((res) => {
           console.log(res);
+        })
+    },
+    //实体关系 结果导出
+    inner1ResultExport() {
+      let fd = new FormData();
+      fd.append("filename", this.numberStr);
+      fd.append("contents", this.modelIndexNew);
+      fd.append("ALL_NOT", this.allnot.toString());
+      this.$http
+        .post("http://39.102.71.123:23352/pic/export_text_testSpeedRelation_results", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          console.log("res",res);
+
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+        })
+        .catch(error => {
+          console.log(error);
         })
     },
     //合并
@@ -1448,6 +1582,31 @@ export default {
           })
       }
     },
+    chooseTableNew() {
+      this.loadingRes = true;
+      let fd = new FormData();
+      fd.append("contents", this.modelIndexNew);
+      this.$http
+        .post("http://39.102.71.123:23352/pic/loadTextDataRE",fd, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          this.numberArr = res.data;
+          this.textData = "";
+          this.testData = res.data.map((cur) => {
+            return { title: cur };
+          });
+          this.fileCountTest = this.testData.length;
+          this.loadingRes = false;
+        })
+        .catch((res) => {
+          console.log(res);
+          alert("出错了！");
+          this.loadingRes = false;
+        });
+    },
     loadModel() {
       let fd = new FormData();
       fd.append("model", this.modelIndex);
@@ -1473,6 +1632,7 @@ export default {
       this.isUpload = false;
       this.uploadFileList = [];
     },
+    //上传
     submitUpload() {
       if (!this.uploadFileList.length) {
         this.$message.error("请选择上传文件！");
@@ -1534,6 +1694,9 @@ export default {
     handleCurrentChangeTrain(cpage) {
       this.curPageTrain = cpage;
     },
+    handleCurrentChangeTrainInner(cpage) {
+      this.curPageTrain1 = cpage;
+    },
     //查看文书内容 浏览
     handleAnalysis(row) {
       this.selectTitle = row.title;
@@ -1543,7 +1706,9 @@ export default {
         url = "viewTextDL";
         fd.append("contents", this.fileIndex);
       } else url = "viewTextDataRE";
+
       fd.append("filename", row.title);
+      fd.append("contents", this.modelIndexNew);
 
       this.loadingRes = true;
       this.$http

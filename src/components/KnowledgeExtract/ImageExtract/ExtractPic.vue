@@ -807,7 +807,7 @@ export default {
       fd.append("filename", row.title);
       this.loadingRes = true;
       this.$http
-        .post("http://39.102.71.123:23352/pic/picDemoTest", fd, {
+        .post("http://39.102.71.123:23352/pic/pic_detect_predict", fd, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
