@@ -7,12 +7,14 @@
           <i class="el-icon-close" style="float: right; padding: 3px 0;" @click="showSingleResult=false"></i>
         </div>
         <div style="padding:0 15px; margin-top:10px;">
-          <el-image :src="singleSrc" fit="contain" >
-            <div slot="placeholder" class="image-slot">
-              加载中
-              <span class="dot">...</span>
-            </div>
-          </el-image>
+          <el-tooltip placement="top" effect="light" :content="tooltipText">
+            <el-image :src="singleSrc" fit="contain" >
+              <div slot="placeholder" class="image-slot">
+                加载中
+                <span class="dot">...</span>
+              </div>
+            </el-image>
+          </el-tooltip>
         </div>
       </el-card>
     </div>
@@ -361,6 +363,7 @@ export default {
   name: "ExtractPic",
   data() {
     return {
+      tooltipText: "",
       threshold:"",
       showThreshold: false,
       inputEntity: "",
@@ -706,6 +709,7 @@ export default {
       this.selectTitle = row.title;
       let fd = new FormData();
       fd.append("filename", row.title);
+      fd.append("contents",this.fileIndex);
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/view_picData", fd, {
@@ -720,7 +724,7 @@ export default {
         .catch(res => {
           console.log(res);
           this.loadingRes = false;
-        });histo
+        });
     },
     //查看历史信息
     showHistory() {
@@ -800,11 +804,12 @@ export default {
           });
       }
     },
-    //预测单个
+    //预测
     handleAnalysis(row) {
       this.selectTitle = row.title;
       let fd = new FormData();
       fd.append("filename", row.title);
+      fd.append("contents",this.fileIndex);
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/pic_detect_predict", fd, {
@@ -814,7 +819,8 @@ export default {
         })
         .then(res => {
           console.log(res)
-          this.showSingleResult=true;
+          this.showSingleResult = true;
+          // this.tooltipText =  //知识卡片文字
           this.singleSrc = res.data;
           this.loadingRes = false;
         })

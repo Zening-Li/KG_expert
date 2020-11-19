@@ -14,12 +14,14 @@
           ></i>
         </div>
         <div style="padding: 0 15px; margin-top: 10px">
-          <video
-            v-if="singleSrc !== ''"
-            :src="singleSrc"
-            controls="controls"
-            style="width: 100%"
-          ></video>
+          <el-tooltip placement="top" effect="light" :content="tooltipText">
+            <video
+              v-if="singleSrc !== ''"
+              :src="singleSrc"
+              controls="controls"
+              style="width: 100%"
+            ></video>
+          </el-tooltip>
         </div>
       </el-card>
     </div>
@@ -220,6 +222,7 @@
                 :src="src"
                 controls="controls"
                 style="width: 100%"
+                @click="videoFn"
               ></video>
             </div>
           </el-col>
@@ -340,6 +343,7 @@ export default {
   name: "ExtractVideo",
   data() {
     return {
+      tooltipText: "",
       threshold:"",
       showThreshold: false,
       graphFlag: false,
@@ -392,6 +396,9 @@ export default {
   },
 
   methods: {
+    videoFn() {
+      console.log(123)
+    },
     onSearchClick() {
       let fd = new FormData();
       fd.append("entity", this.inputEntity);
@@ -479,13 +486,17 @@ export default {
       }
       
       //进度条
+      function round(number, precision) {
+        return Math.round(+number + 'e' + precision) / Math.pow(10, precision);
+      }
       this.showProgress = true;
       this.progressNum = 0;
       setInterval(() => {
         if(this.progressNum == 99 || this.progressNum > 99) {
           clearTimeout(timer);
         }else {
-          var timer = setTimeout(this.progressNum++, 0);
+          var timer = setTimeout(this.progressNum += 0.01, 0);
+          this.progressNum = round(this.progressNum, 2)
         }
       }, 100);
 
@@ -625,7 +636,7 @@ export default {
           this.loadingRes = false;
         });
     },
-    //预测单个
+    //预测
     handleAnalysis(row) {
       this.selectTitle = row.title;
       let fd = new FormData();
@@ -640,6 +651,7 @@ export default {
         .then((res) => {
           console.log(res);
           this.showSingleResult = true;
+          // this.tooltipText =  //知识卡片文字
           this.singleSrc = res.data;
           this.loadingRes = false;
         })
@@ -650,8 +662,11 @@ export default {
     },
     //查看历史信息
     showHistory() {
+      console.log(this.fileIndex);
+      let fd = new FormData();
+      fd.append("contents",this.fileIndex);
       this.$http
-        .post("http://39.102.71.123:23352/pic/videoTestHistory", {
+        .post("http://39.102.71.123:23352/pic/videoTestHistory", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

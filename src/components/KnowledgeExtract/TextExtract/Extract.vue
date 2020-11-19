@@ -157,7 +157,7 @@
             style="float:right;margin-right:20px"
             @click="checkAll"
             v-if="showFlag === 2"
-          >全选1</el-button>
+          >全选</el-button>
           <el-select
             v-model="modelIndexNew"
             v-if="showFlag === 2"
@@ -178,7 +178,7 @@
             size="small"
             @click="chooseTableNew"
             v-if="showFlag === 2"
-          >加载测试数据</el-button>
+          >加载测试数据11</el-button>
         </el-row>
         <el-row class="top-tip" v-if="showTable == 1">
           <span style="margin-left: 0px" v-if="showFlag === 1">请选择训练模型：</span>
@@ -258,6 +258,24 @@
             v-if="showFlag === 1"
           >模型测试</el-button>
         </el-row>
+        <el-row style="margin-top:-10px;margin-bottom:10px;">
+          <el-button
+            v-if="showTable == 3"
+            type="primary"
+            class="darkBtn"
+            size="small"
+            style="float: right; margin-right: 20px"
+            @click="textResultExport"
+          >结果导出</el-button>
+          <el-button
+            v-if="showTable == 3"
+            type="primary"
+            class="darkBtn"
+            size="small"
+            style="float: right; margin-right: 20px"
+            @click="textModelTest"
+          >模型测试</el-button>
+        </el-row>
         <div id="matchInfo" v-if="testData.length !== 0 && showTable == 1">
           <div>
             已有测试数据数量 : {{ testData.length }}
@@ -296,7 +314,7 @@
                     type="primary"
                     plain
                     size="small"
-                  >浏览1</el-button>
+                  >浏览</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -319,7 +337,7 @@
                     type="primary"
                     plain
                     size="small"
-                  >浏览2</el-button>
+                  >浏览</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -333,7 +351,7 @@
               style="width: 97%"
               border
             >
-              <el-table-column prop="title2" label="测试数据"></el-table-column>
+              <el-table-column prop="title2" label="测试数据111"></el-table-column>
               <el-table-column label="操作" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
@@ -1062,7 +1080,6 @@ export default {
         })
         .then((res) => {
           let arr = res.data;
-          console.log("arr111",arr);
           this.innerDiaArr = arr.map(cur => {
             return {entity1: cur[0],rel:cur[1],entity2:cur[2]};
           })
@@ -1103,6 +1120,7 @@ export default {
     openInner1() {
       this.innerVisible1 = true;
       let fd = new FormData();
+      console.log(this.modelIndexNew);
       fd.append("contents", this.modelIndexNew);
       fd.append("ALL_NOT", this.allnot.toString());
       this.$http
@@ -1593,6 +1611,7 @@ export default {
           },
         })
         .then((res) => {
+          this.txtArr = [];
           this.numberArr = res.data;
           this.textData = "";
           this.testData = res.data.map((cur) => {
@@ -1606,6 +1625,52 @@ export default {
           alert("出错了！");
           this.loadingRes = false;
         });
+    },
+    //文本知识抽取 模型测试
+    textModelTest() {
+      this.fullscreenLoading = true;
+      this.$http
+        .post("http://39.102.71.123:23352/pic/text_extract_test", {
+          headers: {
+              "Content-Type": "multipart/form-data",
+            },
+        })
+        .then(res => {
+          console.log(res);
+          this.fullscreenLoading = false;
+          this.$alert(
+            "finish!",
+            "模型测试结果",
+            { dangerouslyUseHTMLString: true, }
+          )
+        })
+        .catch(error => {
+          console.log(error);
+          this.fullscreenLoading = false;
+        })
+    },
+    //文本知识抽取 结果导出
+    textResultExport() {
+      this.$http
+        .post("http://39.102.71.123:23352/pic/export_extract_text_test_results", {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          console.log("res",res);
+
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+        })
+        .catch(error => {
+          console.log(error);
+        })
     },
     loadModel() {
       let fd = new FormData();
