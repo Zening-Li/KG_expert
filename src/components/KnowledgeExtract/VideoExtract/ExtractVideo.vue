@@ -14,7 +14,7 @@
           ></i>
         </div>
         <div style="padding: 0 15px; margin-top: 10px">
-          <el-tooltip placement="bottom-end" effect="light">
+          <!-- <el-tooltip placement="bottom-end" effect="light">
             <div slot="content" ref="tool"></div>
             <video
               v-if="singleSrc !== ''"
@@ -22,7 +22,14 @@
               controls="controls"
               style="width: 100%"
             ></video>
-          </el-tooltip>
+          </el-tooltip> -->
+          <video
+              v-if="singleSrc !== ''"
+              :src="singleSrc"
+              controls="controls"
+              style="width: 100%"
+              @mouseover="videoFn"
+            ></video>
         </div>
       </el-card>
     </div>
@@ -642,9 +649,10 @@ export default {
       this.selectTitle = row.title;
       let fd = new FormData();
       fd.append("filename", row.title);
+      fd.append("contents",this.fileIndex);
       this.loadingRes = true;
       this.$http
-        .post("http://39.102.71.123:23352/pic/videoTestDemo", fd, {
+        .post("http://39.102.71.123:23352/pic/video_detect_predict", fd, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -653,9 +661,9 @@ export default {
           console.log(res);
           this.showSingleResult = true;
           this.tooltipText = res.data[1].replace(/\n/g, "<br>");  //知识卡片文字
-          this.$nextTick(() => {
-            this.$refs.tool.innerHTML = this.tooltipText;
-          })
+          // this.$nextTick(() => {
+          //   this.$refs.tool.innerHTML = this.tooltipText;
+          // })
           this.singleSrc = res.data;
           this.loadingRes = false;
         })
@@ -663,6 +671,13 @@ export default {
           console.log(res);
           this.loadingRes = false;
         });
+    },
+    videoFn() {
+      this.$alert(
+        "<p>" + this.tooltipText + "</p>",
+        "知识卡片",
+        { dangerouslyUseHTMLString: true }
+      )
     },
     //查看历史信息
     showHistory() {

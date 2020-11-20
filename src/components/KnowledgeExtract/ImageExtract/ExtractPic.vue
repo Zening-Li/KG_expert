@@ -7,7 +7,7 @@
           <i class="el-icon-close" style="float: right; padding: 3px 0;" @click="showSingleResult=false"></i>
         </div>
         <div style="padding:0 15px; margin-top:10px;">
-          <el-tooltip placement="bottom-end" effect="light">
+          <!-- <el-tooltip placement="bottom-end" effect="light">
             <div slot="content" ref="tool"></div>
             <el-image :src="singleSrc" fit="contain" >
               <div slot="placeholder" class="image-slot">
@@ -15,7 +15,13 @@
                 <span class="dot">...</span>
               </div>
             </el-image>
-          </el-tooltip>
+          </el-tooltip> -->
+          <el-image :src="singleSrc" fit="contain" @mouseover="imageFn">
+            <div slot="placeholder" class="image-slot">
+              加载中
+              <span class="dot">...</span>
+            </div>
+          </el-image>
         </div>
       </el-card>
     </div>
@@ -826,9 +832,10 @@ export default {
           console.log(res)
           this.showSingleResult = true;
           this.tooltipText = res.data[1].replace(/\n/g,"<br>");  //知识卡片文字
-          this.$nextTick(() => {
-            this.$refs.tool.innerHTML = this.tooltipText;
-          })
+          // console.log(this.tooltipText);
+          // this.$nextTick(() => {
+          //   this.$refs.tool.innerHTML = this.tooltipText;
+          // })
           this.singleSrc = res.data[0];
           this.loadingRes = false;
         })
@@ -836,6 +843,13 @@ export default {
           console.log(res);
           this.loadingRes = false;
         });
+    },
+    imageFn() {
+      this.$alert(
+        "<p>" + this.tooltipText + "</p>",
+        "知识卡片",
+        { dangerouslyUseHTMLString: true }
+      )
     },
     handleAnalysisResult(row) {
       this.resultSrc=row;
