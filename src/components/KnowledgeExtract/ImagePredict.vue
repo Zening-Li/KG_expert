@@ -219,7 +219,7 @@
               border
               v-if="tabDis == 1"
             >
-              <el-table-column prop="title" label="预测数据"></el-table-column>
+              <el-table-column prop="title" label="测试数据"></el-table-column>
               <el-table-column label="浏览" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
