@@ -14,7 +14,8 @@
           ></i>
         </div>
         <div style="padding: 0 15px; margin-top: 10px">
-          <el-tooltip placement="top" effect="light" :content="tooltipText">
+          <el-tooltip placement="bottom-end" effect="light">
+            <div slot="content" ref="tool"></div>
             <video
               v-if="singleSrc !== ''"
               :src="singleSrc"
@@ -651,7 +652,10 @@ export default {
         .then((res) => {
           console.log(res);
           this.showSingleResult = true;
-          // this.tooltipText =  //知识卡片文字
+          this.tooltipText = res.data[1].replace(/\n/g, "<br>");  //知识卡片文字
+          this.$nextTick(() => {
+            this.$refs.tool.innerHTML = this.tooltipText;
+          })
           this.singleSrc = res.data;
           this.loadingRes = false;
         })

@@ -178,7 +178,7 @@
             size="small"
             @click="chooseTableNew"
             v-if="showFlag === 2"
-          >加载测试数据11</el-button>
+          >加载测试数据</el-button>
         </el-row>
         <el-row class="top-tip" v-if="showTable == 1">
           <span style="margin-left: 0px" v-if="showFlag === 1">请选择训练模型：</span>
@@ -1773,7 +1773,7 @@ export default {
       } else url = "viewTextDataRE";
 
       fd.append("filename", row.title);
-      fd.append("contents", this.modelIndexNew);
+      fd.append("contents", this.fileIndex);
 
       this.loadingRes = true;
       this.$http
