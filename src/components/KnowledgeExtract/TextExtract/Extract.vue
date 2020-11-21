@@ -1773,10 +1773,16 @@ export default {
         url = "viewTextDL";
         fd.append("filename", row.title);
         fd.append("contents", this.fileIndex);
+
+        console.log("row.title",row.title)
+        console.log("this.fileIndex",this.fileIndex)
       } else if(this.showFlag === 2) {
         url = "viewTextDataRE";
         fd.append("filename", row.title);
         fd.append("contents", this.modelIndexNew);
+
+        console.log("row.title",row.title)
+        console.log("this.fileIndex",this.modelIndexNew)
       } 
       this.loadingRes = true;
       this.$http
