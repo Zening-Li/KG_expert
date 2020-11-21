@@ -1765,16 +1765,19 @@ export default {
     //查看文书内容 浏览
     handleAnalysis(row) {
       this.selectTitle = row.title;
-      let fd = new FormData();
       let url = "";
+
+      let fd = new FormData();
+
       if (this.showFlag===1) {
         url = "viewTextDL";
+        fd.append("filename", row.title);
         fd.append("contents", this.fileIndex);
-      } else url = "viewTextDataRE";
-
-      fd.append("filename", row.title);
-      fd.append("contents", this.fileIndex);
-
+      } else if(this.showFlag === 2) {
+        url = "viewTextDataRE";
+        fd.append("filename", row.title);
+        fd.append("contents", this.modelIndexNew);
+      } 
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/" + url, fd, {
