@@ -6,14 +6,15 @@
     <div id="upload" v-show="showSingleResult">
       <el-card class="box-card">
         <div slot="header" class="clearfix" style="text-align: center">
-          <span>预测结果</span>
+          <span>预测结果</span> 
           <i
             class="el-icon-close"
             style="float: right; padding: 3px 0"
             @click="showSingleResult = false"
           ></i>
         </div>
-        <div style="padding: 0 15px; margin-top: 10px">
+        <div style="padding: 10px 15px; margin-top: 10px;position: relative;">
+          <el-button size="small" class="darkBtn" style="position: absolute; top:-28px;right:16px" @click="videoFn">查看知识卡片</el-button>
           <!-- <el-tooltip placement="bottom-end" effect="light">
             <div slot="content" ref="tool"></div>
             <video
@@ -28,11 +29,14 @@
               :src="singleSrc"
               controls="controls"
               style="width: 100%"
-              @mouseover="videoFn"
             ></video>
         </div>
       </el-card>
     </div>
+    <!-- 知识卡片 -->
+    <el-dialog title="知识卡片" :visible.sync="showCard" width="37%" style="text-align: left;">
+      <div ref="toolText" style="margin-top:-20px"></div>
+    </el-dialog>
     <!-- 进度条 -->
     <el-dialog :visible.sync="showProgress" :show-close="showClose" :close-on-click-modal="showClose">
       <div>
@@ -351,6 +355,7 @@ export default {
   name: "ExtractVideo",
   data() {
     return {
+      showCard: false,
       tooltipText: "",
       threshold:"",
       showThreshold: false,
@@ -404,9 +409,6 @@ export default {
   },
 
   methods: {
-    videoFn() {
-      console.log(123)
-    },
     onSearchClick() {
       let fd = new FormData();
       fd.append("entity", this.inputEntity);
@@ -664,7 +666,7 @@ export default {
           // this.$nextTick(() => {
           //   this.$refs.tool.innerHTML = this.tooltipText;
           // })
-          this.singleSrc = res.data;
+          this.singleSrc = res.data[0];
           this.loadingRes = false;
         })
         .catch((res) => {
@@ -673,11 +675,15 @@ export default {
         });
     },
     videoFn() {
-      this.$alert(
-        "<p>" + this.tooltipText + "</p>",
-        "知识卡片",
-        { dangerouslyUseHTMLString: true }
-      )
+      // this.$alert(
+      //   "<p>" + this.tooltipText + "</p>",
+      //   "知识卡片",
+      //   { dangerouslyUseHTMLString: true }
+      // )
+      this.showCard = true;
+      this.$nextTick(() => {
+        this.$refs.toolText.innerHTML = this.tooltipText;
+      })
     },
     //查看历史信息
     showHistory() {

@@ -6,7 +6,8 @@
           <span>预测结果</span>
           <i class="el-icon-close" style="float: right; padding: 3px 0;" @click="showSingleResult=false"></i>
         </div>
-        <div style="padding:0 15px; margin-top:10px;">
+        <div style="padding:10px 15px; margin-top:10px;position: relative;">
+          <el-button size="small" class="darkBtn" style="position: absolute; top:-28px;right:16px" @click="imageFn">查看知识卡片</el-button>
           <!-- <el-tooltip placement="bottom-end" effect="light">
             <div slot="content" ref="tool"></div>
             <el-image :src="singleSrc" fit="contain" >
@@ -16,7 +17,7 @@
               </div>
             </el-image>
           </el-tooltip> -->
-          <el-image :src="singleSrc" fit="contain" @mouseover="imageFn">
+          <el-image :src="singleSrc" fit="contain">
             <div slot="placeholder" class="image-slot">
               加载中
               <span class="dot">...</span>
@@ -25,6 +26,10 @@
         </div>
       </el-card>
     </div>
+    <!-- 知识卡片 -->
+    <el-dialog title="知识卡片" :visible.sync="showCard" width="37%" style="text-align: left;">
+      <div ref="toolText" style="margin-top:-20px"></div>
+    </el-dialog>
     <!-- 进度条 -->
     <el-dialog :visible.sync="showProgress" :show-close="showClose" :close-on-click-modal="showClose">
       <div>
@@ -370,6 +375,7 @@ export default {
   name: "ExtractPic",
   data() {
     return {
+      showCard:false,
       tooltipText: "",
       threshold:"",
       showThreshold: false,
@@ -845,11 +851,15 @@ export default {
         });
     },
     imageFn() {
-      this.$alert(
-        "<p>" + this.tooltipText + "</p>",
-        "知识卡片",
-        { dangerouslyUseHTMLString: true }
-      )
+      // this.$alert(
+      //   "<p>" + this.tooltipText + "</p>",
+      //   "知识卡片",
+      //   { dangerouslyUseHTMLString: true }
+      // )
+      this.showCard = true;
+      this.$nextTick(() => {
+        this.$refs.toolText.innerHTML = this.tooltipText;
+      })
     },
     handleAnalysisResult(row) {
       this.resultSrc=row;
