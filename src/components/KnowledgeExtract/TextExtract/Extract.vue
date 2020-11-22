@@ -6,7 +6,7 @@
     <!--内容块-->
 
     <!-- 上传窗口-->
-    <div class="upload" v-if="isUpload">
+    <!-- <div class="upload" v-if="isUpload">
       <el-card class="box-card" style="text-align: center">
         <div slot="header" class="clearfix">
           <span>文件上传</span>
@@ -42,7 +42,7 @@
           @click="submitUpload"
         >上传</el-button>
       </el-card>
-    </div>
+    </div> -->
 
     <!--测试结果-->
     <div class="upload" v-show="showResult">
@@ -144,13 +144,13 @@
             @click="extractEntityProperty"
             v-if="showFlag === 2"
           >抽取实体属性</el-button>
-          <el-button
+          <!-- <el-button
             class="darkBtn"
             size="small"
             style="float: right; margin: 0 20px 0 0"
             @click="isUpload = true"
             v-if="showFlag === 2"
-          >上传文件</el-button>
+          >上传文件</el-button> -->
           <el-button
             class="darkBtn"
             size="small"
