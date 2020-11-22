@@ -664,7 +664,7 @@ export default {
           // this.$nextTick(() => {
           //   this.$refs.tool.innerHTML = this.tooltipText;
           // })
-          this.singleSrc = res.data;
+          this.singleSrc = res.data[0];
           this.loadingRes = false;
         })
         .catch((res) => {
