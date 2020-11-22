@@ -34,8 +34,8 @@
         >
       </span>
     </el-dialog>
-    <!-- <!-- 上传视频 -->
-    <div class="upload" v-if="isUpload">
+    <!-- 上传视频 -->
+    <!-- <div class="upload" v-if="isUpload">
       <el-card class="box-card" style="text-align: center">
         <div slot="header" class="clearfix">
           <span>文件上传</span>
