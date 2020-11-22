@@ -34,7 +34,7 @@
         >
       </span>
     </el-dialog>
-    <!-- 上传视频 -->
+    <!-- <!-- 上传视频 -->
     <div class="upload" v-if="isUpload">
       <el-card class="box-card" style="text-align: center">
         <div slot="header" class="clearfix">
@@ -72,7 +72,7 @@
           >上传</el-button
         >
       </el-card>
-    </div>
+    </div> -->
     <!--内容块-->
     <el-main>
       <!--顶部-->
@@ -97,13 +97,13 @@
         <!--v-if="!resultFlag&&!graphFlag"-->
         <!--&gt;加入图谱</el-button>-->
 
-        <el-button
+        <!-- <el-button
           class="darkBtn headbutton"
           size="small"
           @click="isUpload = true"
           v-if="!resultFlag && !graphFlag"
           >上传文件</el-button
-        >
+        > -->
         <el-button
           class="darkBtn headbutton"
           size="small"

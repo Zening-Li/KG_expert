@@ -31,7 +31,7 @@
             </el-option>
           </el-select>
           <el-button style="margin-left:20px;" class="blueBtn" size="small" @click="chooseTable">确定</el-button>
-          <el-button type="primary" class="darkBtn headbutton" size="small" @click="isUpload=true">上传</el-button>
+          <!-- <el-button type="primary" class="darkBtn headbutton" size="small" @click="isUpload=true">上传</el-button> -->
 
           <!-- <el-button type="primary" class="darkBtn" size="small" style="float:right; margin-right:20px;" @click="showGraph">查看图谱</el-button> -->
         </div>

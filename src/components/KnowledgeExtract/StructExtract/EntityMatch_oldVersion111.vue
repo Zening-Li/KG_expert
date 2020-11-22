@@ -9,7 +9,7 @@
     ></div>
     <el-main v-if="resDetailFlag === false && graphFlag === false">
       <!--顶部-->
-      <div class="header">实体对齐</div>
+      <div class="header">结构化数据标注</div>
       <el-divider></el-divider>
       <!--中心-->
       <!--列表页-->
