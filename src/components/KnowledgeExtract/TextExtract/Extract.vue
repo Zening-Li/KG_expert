@@ -351,7 +351,7 @@
               style="width: 97%"
               border
             >
-              <el-table-column prop="title2" label="测试数据111"></el-table-column>
+              <el-table-column prop="title2" label="测试数据"></el-table-column>
               <el-table-column label="操作" width="80" align="center">
                 <template slot-scope="scope">
                   <el-button
