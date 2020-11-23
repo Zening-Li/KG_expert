@@ -1543,8 +1543,9 @@ export default {
     //选择文件集 加载测试数据
     chooseTable() {
       this.loadingRes = true;
+      this.numberStr = "";
+      this.testDataArr = [];
       if(this.showTable == 1) {
-        this.numberStr = "";
         this.txtArr = [];
         this.textData = "";
         this.fileCountTest = 0;
@@ -1575,7 +1576,6 @@ export default {
             this.loadingRes = false;
           });
       }else if(this.showTable == 2) {
-        this.numberStr = "";
         let fd = new FormData();
         fd.append("contents", this.fileIndex);
         this.$http
@@ -1773,16 +1773,10 @@ export default {
         url = "viewTextDL";
         fd.append("filename", row.title);
         fd.append("contents", this.fileIndex);
-
-        console.log("row.title",row.title)
-        console.log("this.fileIndex",this.fileIndex)
       } else if(this.showFlag === 2) {
         url = "viewTextDataRE";
         fd.append("filename", row.title);
         fd.append("contents", this.modelIndexNew);
-
-        console.log("row.title",row.title)
-        console.log("this.fileIndex",this.modelIndexNew)
       } 
       this.loadingRes = true;
       this.$http
