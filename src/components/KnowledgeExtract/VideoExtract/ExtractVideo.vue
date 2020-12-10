@@ -160,7 +160,7 @@
           style="margin-right: 20px"
           @click="showHistory"
           v-if="!resultFlag && !graphFlag"
-        >查看历史信息</el-button>
+        >结果导出</el-button>
       </div>
       <!--中心-->
       <!--      列表页-->
@@ -688,79 +688,97 @@ export default {
     //查看历史信息
     showHistory() {
       console.log(this.fileIndex);
-      let fd = new FormData();
-      fd.append("contents",this.fileIndex);
-      this.$http
-        .post("http://39.102.71.123:23352/pic/videoTestHistory", fd, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      if(this.fileIndex == "") {
+        this.$message.error("请先选择测试目录！");
+      }else {
+        let fd = new FormData();
+        fd.append("contents",this.fileIndex);
+        this.$http
+          .post("http://39.102.71.123:23352/pic/videoTestHistory", fd, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            console.log(res)
+            //this.$alert(
+              //"<p><strong>目标实体数量： <i>" +
+                //res.data[4] +
+                //"</i> 个</strong></p>" +
+                //"<p><strong>抽取目标数量： <i>" +
+                //res.data[3] +
+                //"</i> 个</strong></p>" +
+                //"<p><strong>正确抽取目标数量： <i>" +
+                //res.data[2] +
+                //"</i> 个</strong></p>" +
+                //"<p><strong>历史视频检测准确率： <i>" +
+                //res.data[2] +
+                //"/" +
+                //res.data[3] +
+                //"=" +
+                //res.data[0] +
+                //"</i> %</strong></p>" +
+                //"<p><strong>历史视频检测召回率： <i>" +
+                //res.data[2] +
+                //"/" +
+                //res.data[4] +
+                //"=" +
+                //res.data[1] +
+                //"</i> %</strong></p>" +
+                //"<p><strong>航母目标准确率： <i>" +
+                //res.data[5]+
+                //"</i> %</strong></p>" +
+                //"<p><strong>航母目标召回率： <i>" +
+                //res.data[6]+
+                //"</i> %</strong></p>" +
+                //"<p><strong>驱逐舰目标准确率： <i>" +
+                //res.data[7]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>驱逐舰目标召回率： <i>" +
+                //res.data[8]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>护卫舰目标准确率： <i>" +
+                //res.data[9]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>护卫舰目标召回率： <i>" +
+                //res.data[10]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>巡洋舰目标准确率： <i>" +
+                //res.data[11]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>巡洋舰目标召回率： <i>" +
+                //res.data[12]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>战列舰目标准确率： <i>" +
+               //res.data[13]+
+                //"</i> %</strong></p>"  +
+                //"<p><strong>战列舰目标召回率： <i>" +
+                //res.data[14]+
+                //"</i> %</strong></p>",
+              //"历史测试结果",
+              //{
+                //dangerouslyUseHTMLString: true,
+              //}
+            //);
+          //})
+          //.catch((res) => {
+            //console.log(res);
+          //});
+          const elt = document.createElement("a");
+          elt.setAttribute("href", res.data); //设置文件地址
+          elt.setAttribute("download", "结构化.zip"); //文件名
+          elt.style.display = "none";
+          document.body.appendChild(elt);
+          elt.click();
+          document.body.removeChild(elt);
+
+          this.loadingRes = false;
         })
-        .then((res) => {
-          console.log(res)
-          this.$alert(
-            "<p><strong>目标实体数量： <i>" +
-              res.data[4] +
-              "</i> 个</strong></p>" +
-              "<p><strong>抽取目标数量： <i>" +
-              res.data[3] +
-              "</i> 个</strong></p>" +
-              "<p><strong>正确抽取目标数量： <i>" +
-              res.data[2] +
-              "</i> 个</strong></p>" +
-              "<p><strong>历史视频检测准确率： <i>" +
-              res.data[2] +
-              "/" +
-              res.data[3] +
-              "=" +
-              res.data[0] +
-              "</i> %</strong></p>" +
-              "<p><strong>历史视频检测召回率： <i>" +
-              res.data[2] +
-              "/" +
-              res.data[4] +
-              "=" +
-              res.data[1] +
-              "</i> %</strong></p>" +
-              "<p><strong>航母目标准确率： <i>" +
-              res.data[5]+
-              "</i> %</strong></p>" +
-              "<p><strong>航母目标召回率： <i>" +
-              res.data[6]+
-              "</i> %</strong></p>" +
-              "<p><strong>驱逐舰目标准确率： <i>" +
-              res.data[7]+
-              "</i> %</strong></p>"  +
-              "<p><strong>驱逐舰目标召回率： <i>" +
-              res.data[8]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标准确率： <i>" +
-              res.data[9]+
-              "</i> %</strong></p>"  +
-              "<p><strong>护卫舰目标召回率： <i>" +
-              res.data[10]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标准确率： <i>" +
-              res.data[11]+
-              "</i> %</strong></p>"  +
-              "<p><strong>巡洋舰目标召回率： <i>" +
-              res.data[12]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标准确率： <i>" +
-              res.data[13]+
-              "</i> %</strong></p>"  +
-              "<p><strong>战列舰目标召回率： <i>" +
-              res.data[14]+
-              "</i> %</strong></p>",
-            "历史测试结果",
-            {
-              dangerouslyUseHTMLString: true,
-            }
-          );
+        .catch(error => {
+          console.log(error);
+          this.loadingRes = false;
         })
-        .catch((res) => {
-          console.log(res);
-        });
+        }
     },
     //浏览
     handleAnalysisResult(row) {
