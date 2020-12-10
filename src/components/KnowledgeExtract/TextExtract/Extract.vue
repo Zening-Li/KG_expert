@@ -284,7 +284,7 @@
           </div>
           <span v-if="showFlag === 2">已选择的文件：</span>
           <span v-if="showFlag === 1">已选择的文件：</span>
-          <span v-if="checkedTxt == true && numberStr != ''">全部文件</span> 
+          <span v-if="checkedTxt == true && numberStr != ''">全部文件</span>
           <span ref="txt" v-if="checkedTxt == false "></span>
         </div>
         <!--文书列表-->
@@ -402,7 +402,7 @@
             </div>
             <div style="padding: 0 15px;width:96%;height: 100%">
               <pre
-                
+
                 style="
                   word-break: break-word;
                   word-wrap: break-word;
@@ -688,7 +688,7 @@ export default {
       diaVisible: false,
       selectTitle: "",
       fileCountTest: 0, //total
-      fileCountTest1: 0, 
+      fileCountTest1: 0,
       curPageTest: 1,
       curPageTrain: 1,
       curPageTrain1: 1,
@@ -813,7 +813,7 @@ export default {
         this.multipleSelection = val;
         this.numberStr = "";
         // let arr = [];
-  
+
         if(this.txtArr.length == 0) {
           this.txtArr.push(this.multipleSelection.title);
         }else {
@@ -824,7 +824,7 @@ export default {
           }
         }
         // arr.push(this.multipleSelection.title);
-  
+
         this.numberStr = this.txtArr.toString();
         this.$nextTick(() => {
           this.$refs.txt.innerText = this.numberStr;
@@ -969,7 +969,7 @@ export default {
     //抽取实体关系
     extractEntityRelation() {
       this.fullscreenLoading = true;
-      
+
       if(this.numberStr == "") {
         this.fullscreenLoading = false;
         this.$message.error('请先选择测试文件！');
@@ -1008,7 +1008,7 @@ export default {
             //   {
             //     dangerouslyUseHTMLString: true,
             //   }
-            // ); 
+            // );
           })
           .catch((res) => {
             console.log(res);
@@ -1777,7 +1777,7 @@ export default {
         url = "viewTextDataRE";
         fd.append("filename", row.title);
         fd.append("contents", this.modelIndexNew);
-      } 
+      }
       this.loadingRes = true;
       this.$http
         .post("http://39.102.71.123:23352/pic/" + url, fd, {
@@ -2134,6 +2134,8 @@ body > .el-container {
   top: 10%;
   left: 30%;
   right: 30%;
+  bottom: 10%;
+  overflow-y: scroll;
 }
 .upload-demo {
   margin-bottom: 20px;
